@@ -220,6 +220,7 @@ const App = {
         this.bindGlobalEvents();
         this.setupRoomInteractions();
         this.updateDashboardUI();
+        this.renderCustomRulesTable();
     },
 
     showScreen(screenId) {
@@ -459,6 +460,9 @@ const App = {
         // Lưu thiết lập kịch bản nối vào connections
         GameData.connections[leftCardId] = rightCard.id;
 
+        // Cập nhật bảng kịch bản trực quan ở cột trái thời gian thực
+        this.renderCustomRulesTable();
+
         // Bắn tiếng chuông nhẹ & Chạy hiệu ứng dấu Tick
         SoundManager.playSuccess();
         
@@ -514,6 +518,9 @@ const App = {
         // Dựng danh sách các nút câu nói kích hoạt nhanh
         this.renderTestCommandsGrid();
 
+        // Cập nhật bảng kịch bản cho bước Test
+        this.renderCustomRulesTable();
+
         // Chuyển sang màn hình Test
         this.showScreen('testing');
     },
@@ -564,6 +571,40 @@ const App = {
             });
             container.appendChild(btn);
         });
+    },
+
+    renderCustomRulesTable() {
+        const tbodyTest = document.getElementById('custom-rules-table-body');
+        const tbodyProg = document.getElementById('program-rules-table-body');
+        
+        const generateRowsHtml = () => {
+            let html = "";
+            let count = 0;
+            for (let leftId in GameData.connections) {
+                const rightId = GameData.connections[leftId];
+                const leftCard = GameData.leftCards.find(c => c.id === leftId);
+                const rightCard = GameData.rightCards.find(c => c.id === rightId);
+
+                if (leftCard && rightCard) {
+                    count++;
+                    html += `
+                        <div class="rule-item-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.95); padding: 0.55rem 0.8rem; border-radius: 10px; border: 1px solid var(--border-glass); font-size: 0.82rem; font-weight: 700; gap: 0.5rem; width: 100%;">
+                            <span class="rule-item-speech" style="color: var(--neon-cyan); max-width: 45%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block;">"${leftCard.text}"</span>
+                            <span class="rule-item-arrow-icon" style="color: var(--text-muted); font-size: 0.75rem; font-weight: 800;">&gt;&gt;</span>
+                            <span class="rule-item-action" style="color: var(--neon-purple); max-width: 45%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block;">${rightCard.text}</span>
+                        </div>
+                    `;
+                }
+            }
+            if (count === 0) {
+                html = `<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 0.75rem;">Chưa có thiết bị nào được lập trình.</div>`;
+            }
+            return html;
+        };
+
+        const html = generateRowsHtml();
+        if (tbodyTest) tbodyTest.innerHTML = html;
+        if (tbodyProg) tbodyProg.innerHTML = html;
     },
 
     executeTestSpeechCommand(leftId, utteranceText) {

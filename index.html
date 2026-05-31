@@ -302,8 +302,10 @@
                 </div>
 
                 <div class="programming-grid">
-                    <!-- 1. KHUNG CĂN PHÒNG (KHUNG CHỮ NHẬT VIỀN VÀNG NEON) -->
-                    <div class="room-viewport yellow-box" id="room-viewport-container" style="position: relative;">
+                    <!-- KHỐI BÊN TRÁI (Red outline box) -->
+                    <div class="programming-column-left" style="display: flex; flex-direction: column; gap: 1.25rem;">
+                        <!-- 1. KHUNG CĂN PHÒNG (KHUNG CHỮ NHẬT VIỀN VÀNG NEON) -->
+                        <div class="room-viewport yellow-box" id="room-viewport-container" style="position: relative;">
                         
                         <div class="room-viewport-header">
                             <div class="room-title">
@@ -780,6 +782,22 @@
                     <div class="device-tooltip" id="program-device-tooltip">Tên đồ vật</div>
                 </div>
 
+                <!-- Bảng tóm tắt liên kết học sinh đang lập trình (Sẽ cập nhật thời gian thực) -->
+                <div class="test-left-section" style="background: rgba(255, 255, 255, 0.7); border: 1.5px solid var(--border-glass); border-radius: 16px; padding: 1rem; width: 100%;">
+                    <div class="test-title-desc" style="padding-bottom: 0.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(15,23,42,0.08);">
+                        <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--neon-cyan);">Bản đồ bộ não AI bạn đang lập trình:</h4>
+                    </div>
+                    <div class="custom-rules-table-card" style="max-height: 140px; overflow-y: auto;">
+                        <div id="program-rules-table-body" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                            <!-- JS tự động cập nhật bảng này thời gian thực -->
+                            <div class="rule-item-row" style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 0.5rem;">Chưa có thiết bị nào được lập trình.</div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- Kết thúc programming-column-left -->
+
+            <!-- KHỐI BÊN PHẢI (Blue outline box) -->
+            <div class="programming-column-right" style="display: flex; flex-direction: column; gap: 1.25rem;">
                 <!-- 2. PHẦN CHATBOX VỚI LUNA - HÌNH CHỮ NHẬT MÀU XANH (Green Box) -->
                 <div class="green-box" id="luna-program-chatbox">
                     <div class="ai-right-section" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between; min-height: 380px;">
@@ -830,20 +848,23 @@
                         </div>
                     </div>
                 </div>
-            </div> <!-- Kết thúc programming-grid -->
-        </div>
-    </section>
+            </div> <!-- Kết thúc programming-column-right -->
+        </div> <!-- Kết thúc programming-grid -->
+    </div>
+</section>
 
 
-        <!-- GIAI ĐOẠN 2 - KIỂM THỬ DỌC MỚI (TESTING SCREEN) -->
-        <section id="testing-screen" class="screen-container">
-            <div class="programming-layout">
-                <div class="programming-intro" style="margin-bottom: 1.25rem;">
-                    <h3>Thử Nghiệm Trí Tuệ Nhân Tạo Bạn Vừa Huấn Luyện 🚀</h3>
-                    <p>Căn phòng giờ đã chạy theo bộ não do bạn thiết lập! Bạn hãy click vào thiết bị hoặc nhấn các nút nói ở LUNA Chatbox bên phải để chạy thử AI mới nhé!</p>
-                </div>
-                
-                <div class="programming-grid">
+    <!-- GIAI ĐOẠN 2 - KIỂM THỬ DỌC MỚI (TESTING SCREEN) -->
+    <section id="testing-screen" class="screen-container">
+        <div class="programming-layout">
+            <div class="programming-intro" style="margin-bottom: 1.25rem;">
+                <h3>Thử Nghiệm Trí Tuệ Nhân Tạo Bạn Vừa Huấn Luyện 🚀</h3>
+                <p>Căn phòng giờ đã chạy theo bộ não do bạn thiết lập! Bạn hãy click vào thiết bị hoặc nhấn các nút nói ở LUNA Chatbox bên phải để chạy thử AI mới nhé!</p>
+            </div>
+            
+            <div class="programming-grid">
+                <!-- KHỐI BÊN TRÁI (Red outline box) -->
+                <div class="programming-column-left" style="display: flex; flex-direction: column; gap: 1.25rem;">
                     <!-- BÊN TRÁI: KHUNG CĂN PHÒNG (VIỀN VÀNG) -->
                     <div class="room-viewport yellow-box" id="test-room-viewport-container" style="position: relative;">
                         <div class="room-viewport-header">
@@ -860,6 +881,21 @@
                         <div class="device-tooltip" id="test-device-tooltip">Tên đồ vật</div>
                     </div>
 
+                    <!-- Bảng tóm tắt liên kết học sinh đã lập trình -->
+                    <div class="test-left-section" style="background: rgba(255, 255, 255, 0.7); border: 1.5px solid var(--border-glass); border-radius: 16px; padding: 1rem; width: 100%;">
+                        <div class="test-title-desc" style="padding-bottom: 0.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(15,23,42,0.08);">
+                            <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--neon-purple);">Bản đồ bộ não AI bạn vừa lập trình:</h4>
+                        </div>
+                        <div class="custom-rules-table-card" style="max-height: 140px; overflow-y: auto;">
+                            <div id="custom-rules-table-body" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                                <!-- Điền các hàng liên kết tại đây -->
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- Kết thúc programming-column-left -->
+
+                <!-- KHỐI BÊN PHẢI (Blue outline box) -->
+                <div class="programming-column-right" style="display: flex; flex-direction: column; gap: 1.25rem;">
                     <!-- BÊN PHẢI: KHUNG CHATBOX VỚI LUNA (VIỀN XANH LÁ) -->
                     <div class="green-box" id="test-luna-chatbox">
                         <div class="ai-right-section" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between; gap: 1rem; min-height: 380px;">
