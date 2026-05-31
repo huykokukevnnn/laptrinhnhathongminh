@@ -1999,3 +1999,192 @@ main {
     }
 }
 
+/* --- HỆ THỐNG GIAO DIỆN LẬP TRÌNH NHÀ THÔNG MINH MỚI GIAI ĐOẠN 2 --- */
+.yellow-box {
+    border: 4px solid var(--neon-yellow) !important;
+    box-shadow: 0 0 25px rgba(202, 138, 4, 0.25) !important;
+    border-radius: 24px !important;
+    overflow: hidden;
+    background: linear-gradient(180deg, #FAF7F2 0%, #EADDC9 100%) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.green-box {
+    border: 4px solid var(--neon-green) !important;
+    box-shadow: 0 0 25px rgba(22, 163, 74, 0.25) !important;
+    border-radius: 24px !important;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    justify-content: space-between;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 400px;
+}
+
+/* Hiệu ứng nhấp nháy focus khi rê chuột vào thiết bị */
+.device-focused {
+    cursor: pointer;
+    filter: brightness(1.2) drop-shadow(0 0 10px var(--neon-yellow)) !important;
+    animation: device-blink 1.2s infinite alternate;
+}
+
+@keyframes device-blink {
+    0% { filter: brightness(1.1) drop-shadow(0 0 4px var(--neon-yellow)); }
+    100% { filter: brightness(1.3) drop-shadow(0 0 14px var(--neon-yellow)); }
+}
+
+/* Bong bóng hiển thị tên thiết bị */
+.device-tooltip {
+    position: absolute;
+    background: rgba(15, 23, 42, 0.9);
+    color: #ffffff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    pointer-events: none;
+    z-index: 1000;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: translate(-50%, -100%) translateY(-10px) scale(0.9);
+}
+
+.device-tooltip.show {
+    opacity: 1;
+    transform: translate(-50%, -100%) translateY(-6px) scale(1);
+}
+
+/* Thiết bị đang được chọn */
+.device-selected {
+    filter: brightness(1.2) drop-shadow(0 0 12px var(--neon-green)) !important;
+}
+
+/* Nút tròn "+" lớn */
+.btn-plus-round {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--grad-green);
+    color: #ffffff;
+    border: none;
+    font-size: 2.2rem;
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-green);
+    margin: 1.25rem auto;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.btn-plus-round:hover {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 8px 24px rgba(22, 163, 74, 0.4);
+}
+
+/* Dropdown chọn chức năng */
+.dropdown-menu-list {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: #ffffff;
+    border: 1.5px solid var(--border-glass);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+    z-index: 200;
+    width: 240px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dropdown-menu-list.show {
+    display: flex;
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.dropdown-item-action {
+    padding: 0.85rem 1.25rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    background: #ffffff;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+}
+
+.dropdown-item-action:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item-action:hover {
+    background: rgba(22, 163, 74, 0.08);
+    color: var(--neon-green);
+}
+
+/* Hoạt hình Tick thành công */
+.checkmark-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--neon-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1.25rem auto;
+    animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    box-shadow: var(--shadow-green);
+}
+
+.checkmark-icon {
+    width: 28px;
+    height: 28px;
+    stroke: #ffffff;
+    stroke-width: 4.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    stroke-dasharray: 40;
+    stroke-dashoffset: 40;
+    animation: drawCheck 0.3s 0.2s ease-out forwards;
+}
+
+@keyframes scaleIn {
+    0% { transform: scale(0); }
+    100% { transform: scale(1); }
+}
+
+@keyframes drawCheck {
+    to { stroke-dashoffset: 0; }
+}
+
+/* Layout Giai đoạn Lập trình */
+.programming-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 1.5rem;
+    align-items: stretch;
+}
+
+@media (max-width: 1024px) {
+    .programming-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+

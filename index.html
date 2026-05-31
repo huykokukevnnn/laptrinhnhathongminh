@@ -27,12 +27,8 @@
 
         <!-- Trình hiển thị tiến độ 2 Giai đoạn -->
         <div class="game-steps">
-            <div class="step-indicator active" id="step-indicator-1">
-                <span class="num">1</span> Khám Phá AI
-            </div>
-            <div class="step-arrow">&gt;</div>
-            <div class="step-indicator" id="step-indicator-2">
-                <span class="num">2</span> Lập Trình AI Mới
+            <div class="step-indicator active" id="step-indicator-2">
+                <span class="num">★</span> Lập Trình Nhà Thông Minh
             </div>
         </div>
 
@@ -296,22 +292,28 @@
         </section>
 
         
-        <!-- GIAI ĐOẠN 1: KHÁM PHÁ CẤU TRÚC DỌC MỚI (PHASE 1 SCREEN) -->
-        <section id="phase1-screen" class="screen-container">
-            <div class="game-vertical-layout">
+        <!-- GIAI ĐOẠN 2: LẬP TRÌNH AI MỚI (PHASE 2 SCREEN) -->
+        <section id="phase2-screen" class="screen-container">
+            <div class="programming-layout">
                 
-                <!-- 1. KHUNG CĂN PHÒNG (KHUNG CHỮ NHẬT VIỀN VÀNG NEON) -->
-                <div class="room-viewport" id="room-viewport-container">
-                    
-                    <div class="room-viewport-header">
-                        <div class="room-title">
-                            <div class="room-status-dot"></div>
-                            <h3>Phòng Khách Thông Minh Tối Giản</h3>
+                <div class="programming-intro" style="margin-bottom: 1.25rem;">
+                    <h3>Tự Tay Huấn Luyện Bộ Não Cho AI Smart Home</h3>
+                    <p>Hãy đưa chuột nhấp chọn vào đồ vật trong căn phòng bên trái mà bạn muốn gán lệnh, sau đó bên chatbox sẽ xuất hiện nút hình tròn "+" để gán chức năng!</p>
+                </div>
+
+                <div class="programming-grid">
+                    <!-- 1. KHUNG CĂN PHÒNG (KHUNG CHỮ NHẬT VIỀN VÀNG NEON) -->
+                    <div class="room-viewport yellow-box" id="room-viewport-container" style="position: relative;">
+                        
+                        <div class="room-viewport-header">
+                            <div class="room-title">
+                                <div class="room-status-dot"></div>
+                                <h3>Phòng Khách Thông Minh - Thiết Kế Lập Trình</h3>
+                            </div>
+                            <div class="connection-count-badge" id="program-device-status-badge">
+                                Đang chọn thiết bị... 🧠
+                            </div>
                         </div>
-                        <div class="connection-count-badge">
-                            AI đang hoạt động 🧠
-                        </div>
-                    </div>
 
                     <!-- Màn nháy đèn Party (Party Mode) -->
                     <div class="party-glow-overlay"></div>
@@ -774,175 +776,118 @@
                         </svg>
                     </div>
 
-                    <!-- Bảng chỉ dẫn gõ cửa hoặc quay về -->
-                    <div class="room-viewport-footer" style="display:none;"></div>
+                    <!-- Bong bóng hiển thị tên thiết bị động -->
+                    <div class="device-tooltip" id="program-device-tooltip">Tên đồ vật</div>
                 </div>
 
-                <!-- 2. BẢNG GIAO TIẾP AI NẰM NGANG (KHUNG CHỮ NHẬT VIỀN ĐỎ NEON) -->
-                <div class="ai-panel-horizontal">
-                    
-                    <!-- BÊN TRÁI: MIC THU ÂM (mic) VÀ ORB LUNA -->
-                    <div class="ai-left-section">
-                        <!-- Nút nhấn vào Micro tròn lớn (mic) -->
-                        <button type="button" class="btn-mic" id="btn-mic-input" title="Nói câu lệnh bằng giọng nói">
-                            <svg viewBox="0 0 24 24" id="mic-icon">
-                                <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1 9h2v-3.08c3.39-.49 6-3.38 6-6.92h-2c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.54 2.61 6.43 6 6.92V23z"/>
-                            </svg>
-                        </button>
+                <!-- 2. PHẦN CHATBOX VỚI LUNA - HÌNH CHỮ NHẬT MÀU XANH (Green Box) -->
+                <div class="green-box" id="luna-program-chatbox">
+                    <div class="ai-right-section" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between; min-height: 380px;">
                         
-                        <!-- Quả cầu năng lượng AI LUNA lơ lửng -->
-                        <div class="luna-orb-container">
-                            <div class="luna-orb-ring"></div>
-                            <div class="luna-orb" id="luna-orb-element"></div>
-                        </div>
-                    </div>
-
-                    <!-- BÊN PHẢI: KHUNG ĐỐI THOẠI HỌC SINH & LUNA -->
-                    <div class="ai-right-section">
                         <!-- AI trả lời (Bóng thoại LUNA) -->
                         <div class="luna-chat-bubble-container">
-                            <div class="luna-chat-bubble">
+                            <div class="luna-chat-bubble" style="min-height: 140px;">
                                 <strong>Trợ Lý LUNA (Smart AI)</strong>
-                                <span id="luna-speech-text">Chào mừng bạn đã vào nhà! Tôi là bộ não AI. Bạn hãy nhấn vào nút Micro (tròn) để nói câu lệnh hoặc gõ vào ô nhập liệu bên dưới nhé!</span>
+                                <span id="luna-speech-text">Chào bạn! Hãy đưa chuột nhấp chọn vào đồ vật trong căn phòng bên trái để bắt đầu gán câu lệnh nhé!</span>
                             </div>
                         </div>
 
-                        <!-- Lệnh từ học sinh (Khung chat & Nhật ký mini) -->
-                        <div class="chat-input-and-log-container">
-                            <form class="chat-input-area-horizontal" id="chat-form-input" style="flex: 1; display: flex; gap: 0.5rem;">
-                                <button type="button" class="btn-helper-commands" id="btn-show-help" title="Xem gợi ý">
-                                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
-                                    Gợi Ý
-                                </button>
-                                <input type="text" class="chat-input" id="chat-input-field" placeholder="Nhập câu lệnh trực tiếp hoặc ngữ cảnh..." autocomplete="off">
-                                <button type="submit" class="btn-send" id="btn-submit-chat">
-                                    <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-                                </button>
-                            </form>
+                        <!-- Vùng gán lệnh và hiệu ứng -->
+                        <div class="assign-action-container" style="text-align: center; margin: 1rem 0; min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
+                            <!-- Nút tròn "+" gán lệnh (chỉ hiện khi click chọn thiết bị) -->
+                            <button type="button" class="btn-plus-round" id="btn-assign-plus" style="display: none; position: relative;">
+                                +
+                                <!-- Dropdown menu danh sách chức năng để học sinh lựa chọn -->
+                                <div class="dropdown-menu-list" id="assign-dropdown-menu">
+                                    <div class="dropdown-item-action" data-action="fan_on">Bật/Tắt quạt đứng</div>
+                                    <div class="dropdown-item-action" data-action="tv_on">Bật/Tắt tivi</div>
+                                    <div class="dropdown-item-action" data-action="light_on">Bật/Tắt đèn LED</div>
+                                    <div class="dropdown-item-action" data-action="speaker_on">Bật/Tắt loa đứng</div>
+                                    <div class="dropdown-item-action" data-action="vacuum_on">Kích hoạt robot hút bụi</div>
+                                    <div class="dropdown-item-action" data-action="fridge_open">Mở/Đóng tủ lạnh</div>
+                                    <div class="dropdown-item-action" data-action="ac_on">Bật/Tắt máy lạnh</div>
+                                    <div class="dropdown-item-action" data-action="glassdoor_open">Mở/Đóng cửa kính</div>
+                                </div>
+                            </button>
 
-                            <!-- Nhật ký lệnh mini tóm gọn -->
-                            <div class="chat-history-mini" id="chat-history-log">
-                                <div class="mini-log-item system">Smart AI online</div>
+                            <!-- Vùng hiển thị hiệu ứng dấu tick -->
+                            <div class="checkmark-circle" id="checkmark-success" style="display: none;">
+                                <svg class="checkmark-icon" viewBox="0 0 52 52">
+                                    <circle cx="26" cy="26" r="25" fill="none"/>
+                                    <path d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                                </svg>
                             </div>
                         </div>
+
+                        <!-- Nút Lưu và Kiểm Tra nằm dưới dấu "+" -->
+                        <div class="programming-action-buttons" style="display: flex; gap: 1rem; width: 100%;">
+                            <button class="btn-header accent" id="btn-save-programming" style="flex: 1; justify-content: center; font-weight: 750; background: var(--grad-primary); border-radius: 12px; height: 48px; border: none; color: white;">
+                                Lưu Lập Trình
+                            </button>
+                            <button class="btn-header" id="btn-submit-programming" style="flex: 1; justify-content: center; font-weight: 750; border-radius: 12px; height: 48px; border: 2px solid var(--neon-green); color: var(--neon-green); background: transparent;">
+                                Kiểm Tra 🚀
+                            </button>
+                        </div>
                     </div>
-
                 </div>
-
-                <!-- Nút chuyển sang giai đoạn 2 -->
-                <div class="navigation-bar">
-                    <button class="btn-next-phase" id="btn-to-phase-2">
-                        Tiến sang Giai đoạn 2: Tự lập trình AI
-                        <svg viewBox="0 0 24 24">
-                            <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        
-        <!-- GIAI ĐOẠN 2: LẬP TRÌNH AI MỚI (PHASE 2 SCREEN) -->
-        <section id="phase2-screen" class="screen-container">
-            <div class="programming-layout">
-                
-                <div class="programming-intro">
-                    <h3>Giai Đoạn 2: Huấn Luyện Bộ Não Cho AI Mới Tinh</h3>
-                    <p>Bây giờ bạn sẽ được tiếp quản một <strong>Trí tuệ nhân tạo mới tinh chưa có bất cứ dữ liệu nào</strong>! Trò chơi nối chữ dưới đây cho phép bạn tự do quyết định: Khi học sinh nói câu gì thì AI phải thực thi hành động gì. 
-                    <br>💡 <strong>Sáng tạo tối đa:</strong> Bạn có thể nối chéo lệch hoàn toàn (ví dụ: nói <i>"Sàn nhà dơ quá đi"</i> nhưng lại dạy AI <i>"Cửa kính trượt mở ra ban công"</i>). Hãy kết nối tất cả 8 thẻ để xem AI mới học và thực thi kỳ diệu như thế nào nhé!</p>
-                </div>
-
-                <!-- BẢNG KÉO THẢ NỐI DÂY ĐỘNG (MATCHING CANVAS) -->
-                <div class="matching-canvas-container" id="matching-drag-container">
-                    
-                    <!-- Khung SVG Overlay vẽ dây neon -->
-                    <svg class="connections-svg-overlay" id="connections-svg"></svg>
-
-                    <!-- Cột bên trái: Lời nói / Ngữ cảnh -->
-                    <div class="matching-column left" id="left-cards-column"></div>
-
-                    <!-- Cột bên phải: Hành động thiết bị -->
-                    <div class="matching-column right" id="right-cards-column"></div>
-
-                </div>
-
-                <!-- Thanh nút bấm dưới bảng lập trình -->
-                <div class="programming-actions">
-                    <button class="btn-programming clear" id="btn-clear-connections">
-                        Xóa tất cả các nối dây
-                    </button>
-                    <div class="connection-count-badge">
-                        Đã lập trình: <span id="connections-count">0</span> / 8 liên kết
-                    </div>
-                    <button class="btn-programming submit" id="btn-submit-programming">
-                        Hoàn thành Lập trình & Đi Test thử AI 🚀
-                    </button>
-                </div>
-
-            </div>
-        </section>
+            </div> <!-- Kết thúc programming-grid -->
+        </div>
+    </section>
 
 
         <!-- GIAI ĐOẠN 2 - KIỂM THỬ DỌC MỚI (TESTING SCREEN) -->
         <section id="testing-screen" class="screen-container">
-            <div class="testing-vertical-layout">
-                
-                <!-- BÊN TRÊN: KHUNG CĂN PHÒNG (VIỀN VÀNG) -->
-                <div class="room-viewport" id="test-room-viewport-container">
-                    <div class="room-viewport-header">
-                        <div class="room-title">
-                            <div class="room-status-dot" style="background-color:var(--neon-purple); box-shadow:var(--shadow-purple);"></div>
-                            <h3>Phòng Khách - Thử Nghiệm AI Mới Của Bạn</h3>
-                        </div>
-                        <div class="connection-count-badge" style="color:var(--neon-purple); border-color:var(--border-glass-active);">
-                            AI Mới đang học... 🧠
-                        </div>
-                    </div>
-                    <div class="party-glow-overlay"></div>
-                    <div class="inner-room-container" id="inner-room-container-test"></div>
+            <div class="programming-layout">
+                <div class="programming-intro" style="margin-bottom: 1.25rem;">
+                    <h3>Thử Nghiệm Trí Tuệ Nhân Tạo Bạn Vừa Huấn Luyện 🚀</h3>
+                    <p>Căn phòng giờ đã chạy theo bộ não do bạn thiết lập! Bạn hãy click vào thiết bị hoặc nhấn các nút nói ở LUNA Chatbox bên phải để chạy thử AI mới nhé!</p>
                 </div>
-
-                <!-- BÊN DƯỚI: KHUNG ĐIỀU KHIỂN THỬ NGHIỆM AI TỰ HUẤN LUYỆN (VIỀN TÍM/ĐỎ) -->
-                <div class="test-ai-setup-card">
-                    
-                    <!-- Bảng tóm tắt liên kết học sinh đã lập trình (Trái) -->
-                    <div class="test-left-section">
-                        <div class="test-title-desc">
-                            <h4>Bản đồ bộ não AI bạn vừa lập trình:</h4>
-                            <p>Đối chiếu các câu lệnh do bạn tự tay kéo dây.</p>
+                
+                <div class="programming-grid">
+                    <!-- BÊN TRÁI: KHUNG CĂN PHÒNG (VIỀN VÀNG) -->
+                    <div class="room-viewport yellow-box" id="test-room-viewport-container" style="position: relative;">
+                        <div class="room-viewport-header">
+                            <div class="room-title">
+                                <div class="room-status-dot" style="background-color:var(--neon-purple); box-shadow:var(--shadow-purple);"></div>
+                                <h3>Phòng Khách - Thử Nghiệm AI Mới</h3>
+                            </div>
+                            <div class="connection-count-badge" style="color:var(--neon-purple); border-color:var(--border-glass-active);">
+                                AI Mới đang hoạt động... 🧠
+                            </div>
                         </div>
-                        
-                        <div class="custom-rules-table-card">
-                            <div id="custom-rules-table-body">
-                                <!-- Điền các hàng liên kết tại đây -->
+                        <div class="party-glow-overlay"></div>
+                        <div class="inner-room-container" id="inner-room-container-test"></div>
+                        <div class="device-tooltip" id="test-device-tooltip">Tên đồ vật</div>
+                    </div>
+
+                    <!-- BÊN PHẢI: KHUNG CHATBOX VỚI LUNA (VIỀN XANH LÁ) -->
+                    <div class="green-box" id="test-luna-chatbox">
+                        <div class="ai-right-section" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between; gap: 1rem; min-height: 380px;">
+                            <!-- AI trả lời (Bóng thoại LUNA) -->
+                            <div class="luna-chat-bubble-container">
+                                <div class="luna-chat-bubble" style="min-height: 120px;">
+                                    <strong>Trợ Lý LUNA (Smart AI)</strong>
+                                    <span id="test-luna-speech-text">Huấn luyện thành công! Bạn hãy nhấn các nút nói bên dưới hoặc click trực tiếp vào đồ vật để xem tôi thực thi hành động thế nào nhé!</span>
+                                </div>
+                            </div>
+
+                            <!-- Danh sách các nút câu nói nhanh -->
+                            <div class="test-quick-commands-grid" id="test-quick-commands-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; max-height: 160px; overflow-y: auto; padding-right: 4px;">
+                                <!-- Các nút sẽ được tạo động từ JavaScript -->
+                            </div>
+
+                            <!-- Nút Quay lại lập trình và Nút hoàn thành nằm trong chatbox -->
+                            <div class="test-action-buttons" style="display: flex; flex-direction: column; gap: 0.65rem; width: 100%;">
+                                <button class="btn-finish-game" id="btn-finish-celebration" style="width: 100%; justify-content: center; font-weight: 750; margin: 0; background: var(--grad-primary); border: none; height: 44px; border-radius: 12px; color: white; cursor: pointer; box-shadow: var(--shadow-cyan);">
+                                    Hoàn thành xuất sắc! 🏆
+                                </button>
+                                <button class="btn-programming clear" id="btn-back-to-programming" style="width: 100%; justify-content: center; font-weight: 750; border-radius: 12px; height: 44px; margin: 0; background: rgba(15, 23, 42, 0.05); border: 1px solid var(--border-glass); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                     Quay lại lập trình chỉnh sửa
+                                </button>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Danh sách các nút câu nói nhanh & Hoàn thành (Phải) -->
-                    <div class="test-right-section">
-                        <div class="test-title-desc" style="border-bottom: none; margin-bottom: 0;">
-                            <h4>Hãy nhấn vào nút câu nói để thử nghiệm AI mới:</h4>
-                        </div>
-                        <div class="test-quick-commands-grid" id="test-quick-commands-container">
-                            <!-- JS tự tạo 6 nút bấm nhanh từ 6 câu nói -->
-                        </div>
-
-                        <!-- Nút hoàn thành cúp vinh danh -->
-                        <button class="btn-finish-game" id="btn-finish-celebration" style="margin-top: 1rem;">
-                            Hoàn thành xuất sắc bài học AI Master! 🏆
-                        </button>
-                    </div>
-
                 </div>
-
-                <!-- Nút quay lại tái lập trình -->
-                <div class="navigation-bar" style="margin-top: 0;">
-                    <button class="btn-programming clear" id="btn-back-to-programming" style="width: 100%; justify-content: center;">
-                        Quay lại Giai đoạn 2: Tự lập trình lại các nút nối
-                    </button>
-                </div>
-
             </div>
         </section>
 
