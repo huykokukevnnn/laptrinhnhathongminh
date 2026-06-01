@@ -180,14 +180,14 @@ const GameData = {
 
     // Dữ liệu câu nói / ngữ cảnh (Left Cards)
     leftCards: [
-        { id: "L1", text: "Bật quạt đứng thổi mát", icon: "💨" },
-        { id: "L2", text: "Hôm nay trời nóng quá", icon: "☀️" },
-        { id: "L3", text: "Tối quá không thấy đường", icon: "🌙" },
-        { id: "L4", text: "Hôm nay ăn gì nhỉ?", icon: "🍎" },
-        { id: "L5", text: "Hãy mở cửa kính ban công", icon: "🚪" },
-        { id: "L6", text: "Sàn nhà dơ quá đi", icon: "🧹" },
-        { id: "L7", text: "Bật tivi xem tin tức", icon: "📺" },
-        { id: "L8", text: "Bật loa phát nhạc giải trí", icon: "🎵" }
+        { id: "L1", text: "Bật quạt", icon: "💨" },
+        { id: "L2", text: "Bật máy lạnh", icon: "☀️" },
+        { id: "L3", text: "Bật đèn", icon: "🌙" },
+        { id: "L4", text: "Mở tủ lạnh", icon: "🍎" },
+        { id: "L5", text: "Mở cửa kính", icon: "🚪" },
+        { id: "L6", text: "Bật robot hút bụi", icon: "🧹" },
+        { id: "L7", text: "Bật tivi", icon: "📺" },
+        { id: "L8", text: "Bật loa", icon: "🎵" }
     ],
 
     // Dữ liệu chức năng hành động (Right Cards)

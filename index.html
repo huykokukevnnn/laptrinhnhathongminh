@@ -897,17 +897,7 @@
                                 </div>
                             </div>
 
-                            <!-- Bảng tóm tắt liên kết học sinh đã lập trình -->
-                            <div class="test-left-section" style="background: rgba(15, 23, 42, 0.03); border: 1px solid rgba(15, 23, 42, 0.08); border-radius: 16px; padding: 1rem; width: 100%;">
-                                <div class="test-title-desc" style="padding-bottom: 0.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(15,23,42,0.08);">
-                                    <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--neon-purple);">Bản đồ bộ não AI bạn vừa lập trình:</h4>
-                                </div>
-                                <div class="custom-rules-table-card" style="max-height: 140px; overflow-y: auto;">
-                                    <div id="custom-rules-table-body" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                                        <!-- Điền các hàng liên kết tại đây -->
-                                    </div>
-                                </div>
-                            </div>
+
 
                             <!-- Khu vực nút Mic thử nghiệm giọng nói động (JS tự động kết xuất) -->
                             <div class="mic-test-container" id="test-quick-commands-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.6rem; background: rgba(15, 23, 42, 0.03); border: 1px solid rgba(15, 23, 42, 0.08); border-radius: 16px; padding: 1rem; width: 100%;">
@@ -945,69 +935,39 @@
                 <div class="commands-help-list">
                     
                     <div>
-                        <h4 class="commands-section-title">1. Nhóm Câu Lệnh Trực Tiếp (Bật/Tắt Thiết Bị)</h4>
+                        <h4 class="commands-section-title">Danh Sách Câu Lệnh Điều Khiển Trực Tiếp</h4>
                         <div class="commands-grid-help">
                             <div class="help-command-item" data-cmd="Bật quạt">
-                                <span class="help-command-input">"Bật quạt" / "Tắt quạt"</span>
+                                <span class="help-command-input">"Bật quạt"</span>
                                 <span class="help-command-effect">Vật lý: Cánh quạt quay tít / ngừng quay</span>
                             </div>
                             <div class="help-command-item" data-cmd="Bật đèn">
-                                <span class="help-command-input">"Bật đèn" / "Tắt đèn"</span>
+                                <span class="help-command-input">"Bật đèn"</span>
                                 <span class="help-command-effect">Ánh sáng: Đèn LED áp tường rọi chùm sáng cone ấm</span>
                             </div>
-                            <div class="help-command-item" data-cmd="Kích hoạt robot hút bụi">
-                                <span class="help-command-input">"Kích hoạt robot hút bụi" / "Dừng hút bụi"</span>
+                            <div class="help-command-item" data-cmd="Bật robot hút bụi">
+                                <span class="help-command-input">"Bật robot hút bụi"</span>
                                 <span class="help-command-effect">Vận động: Robot trượt đi dọn dẹp an toàn dưới sàn</span>
                             </div>
                             <div class="help-command-item" data-cmd="Mở tủ lạnh">
-                                <span class="help-command-input">"Mở tủ lạnh" / "Đóng tủ lạnh"</span>
+                                <span class="help-command-input">"Mở tủ lạnh"</span>
                                 <span class="help-command-effect">Nhà bếp: Cửa tủ lạnh 2 cánh mở lật phát sáng</span>
                             </div>
                             <div class="help-command-item" data-cmd="Bật máy lạnh">
-                                <span class="help-command-input">"Bật máy lạnh" / "Tắt máy lạnh"</span>
+                                <span class="help-command-input">"Bật máy lạnh"</span>
                                 <span class="help-command-effect">Môi trường: Thổi ra các làn sóng gió mát lạnh</span>
                             </div>
                             <div class="help-command-item" data-cmd="Mở cửa kính">
-                                <span class="help-command-input">"Mở cửa kính" / "Đóng cửa kính"</span>
+                                <span class="help-command-input">"Mở cửa kính"</span>
                                 <span class="help-command-effect">Mở cửa: Hai cánh kính tự động trượt mở ra ban công</span>
                             </div>
                             <div class="help-command-item" data-cmd="Bật tivi">
-                                <span class="help-command-input">"Bật tivi" / "Tắt tivi"</span>
+                                <span class="help-command-input">"Bật tivi"</span>
                                 <span class="help-command-effect">Xem phim: Màn hình hiển thị nhiễu trắng đen hoạt động</span>
                             </div>
                             <div class="help-command-item" data-cmd="Bật loa">
-                                <span class="help-command-input">"Bật loa" / "Tắt loa"</span>
+                                <span class="help-command-input">"Bật loa"</span>
                                 <span class="help-command-effect">Âm nhạc: Loa dạng trụ phát nhạc, có nốt nhạc bay lên</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style="margin-top:0.5rem;">
-                        <h4 class="commands-section-title">2. Nhóm Câu Lệnh Ngữ Cảnh (AI Tự Phân Tích Logic)</h4>
-                        <div class="commands-grid-help">
-                            <div class="help-command-item" data-cmd="Nóng quá">
-                                <span class="help-command-input">"Nóng quá" / "Tôi oi bức quá"</span>
-                                <span class="help-command-effect">AI phân tích: Tự bật QUẠT & MÁY LẠNH mát lạnh</span>
-                            </div>
-                            <div class="help-command-item" data-cmd="Tối quá không thấy đường">
-                                <span class="help-command-input">"Tối quá không thấy đường" / "Mở đèn lên đi"</span>
-                                <span class="help-command-effect">AI phân tích: Thắp sáng ĐÈN LED ÁP TƯỜNG hai bên</span>
-                            </div>
-                            <div class="help-command-item" data-cmd="Hôm nay ăn gì nhỉ">
-                                <span class="help-command-input">"Hôm nay ăn gì nhỉ" / "Tôi đói bụng quá"</span>
-                                <span class="help-command-effect">AI phân tích: Tự động MỞ TỦ LẠNH 2 CÁNH tìm đồ ăn</span>
-                            </div>
-                            <div class="help-command-item" data-cmd="Sàn nhà dơ quá đi">
-                                <span class="help-command-input">"Sàn nhà dơ quá đi" / "Nhà bẩn thế"</span>
-                                <span class="help-command-effect">AI suy luận đa bước: Sàn nhà dơ ➔ Lau dọn ➔ Bật ROBO HÚT BỤI</span>
-                            </div>
-                            <div class="help-command-item" data-cmd="Hãy mở cửa kính ban công">
-                                <span class="help-command-input">"Hãy mở cửa kính ban công" / "Mở cửa cho gió vào"</span>
-                                <span class="help-command-effect">AI phân tích: Kích hoạt TRƯỢT MỞ CỬA KÍNH 2 CÁNH</span>
-                            </div>
-                            <div class="help-command-item" data-cmd="Buồn quá">
-                                <span class="help-command-input">"Buồn quá" / "Chán quá" / "Giải trí"</span>
-                                <span class="help-command-effect">AI phân tích: Tự động BẬT TIVI & BẬT LOA giải trí cùng lúc</span>
                             </div>
                         </div>
                     </div>
