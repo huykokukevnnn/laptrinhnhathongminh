@@ -2143,8 +2143,6 @@ main {
     background: var(--grad-green);
     color: #ffffff;
     border: none;
-    font-size: 2.2rem;
-    font-weight: 300;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2155,9 +2153,21 @@ main {
     position: relative;
 }
 
+.plus-text {
+    font-size: 2.2rem;
+    font-weight: 300;
+    line-height: 1;
+    display: inline-block;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .btn-plus-round:hover {
-    transform: scale(1.1) rotate(90deg);
+    transform: scale(1.1);
     box-shadow: 0 8px 24px rgba(22, 163, 74, 0.4);
+}
+
+.btn-plus-round:hover .plus-text {
+    transform: rotate(90deg);
 }
 
 /* Dropdown chọn chức năng */
