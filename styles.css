@@ -242,8 +242,8 @@ header {
 /* --- VÙNG HIỂN THỊ GAME --- */
 main {
     flex: 1;
-    width: 100%;
-    max-width: 1350px;
+    width: 95%;
+    max-width: 1600px;
     margin: 0 auto;
     padding: 1.5rem;
     position: relative;
@@ -456,7 +456,7 @@ main {
     justify-content: space-between;
     position: relative;
     overflow: hidden;
-    min-height: 400px;
+    min-height: 360px;
     transition: all 0.3s ease;
     color: var(--text-main);
     width: 100%;
@@ -784,15 +784,29 @@ main {
     opacity: 0.28; /* Giảm độ sáng siêu mờ nhạt, chỉ tạo một vệt sáng be dịu nhẹ cực kỳ tinh tế */
 }
 
-/* Tự động tối phòng khi tắt đèn và sáng bừng lên khi bật đèn */
+/* Vô hiệu hóa lớp mờ cũ trong SVG để tránh đè lớp */
 #roomDimOverlay {
-    opacity: 0.25 !important;
-    transition: opacity 0.5s ease;
+    display: none !important;
 }
 
-.inner-room-container:has(.device-light-on) #roomDimOverlay,
-.inner-room-container.device-light-on #roomDimOverlay {
-    opacity: 0 !important;
+/* Lớp phủ mờ tối phòng seamless toàn bộ khu vực dưới tiêu đề */
+.inner-room-container::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #070a13;
+    opacity: 0.25;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+    z-index: 5;
+    border-radius: 0 0 20px 20px;
+}
+
+.inner-room-container.device-light-on::after {
+    opacity: 0;
 }
 
 .bulb-glow {
@@ -2076,7 +2090,7 @@ main {
     gap: 1.25rem;
     justify-content: space-between;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    min-height: 400px;
+    min-height: 360px;
     height: 100%;
 }
 
@@ -2245,6 +2259,34 @@ main {
 @media (max-width: 480px) {
     .test-quick-commands-grid {
         grid-template-columns: 1fr !important;
+    }
+}
+
+/* --- TỐI ƯU HÓA RESPONSIVE CHO TABLET NẰM NGANG (LANDSCAPE TABLET) --- */
+@media (max-width: 1200px) {
+    .room-viewport {
+        min-height: 300px !important;
+    }
+    
+    .green-box {
+        min-height: 320px !important;
+        padding: 1rem !important;
+        gap: 0.75rem !important;
+    }
+
+    .luna-chat-bubble {
+        min-height: 100px !important;
+    }
+
+    .custom-rules-table-card {
+        max-height: 110px !important;
+    }
+
+    .btn-plus-round,
+    .checkmark-circle {
+        width: 50px !important;
+        height: 50px !important;
+        margin: 0.5rem auto !important;
     }
 }
 
