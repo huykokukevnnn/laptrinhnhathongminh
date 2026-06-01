@@ -2060,6 +2060,7 @@ main {
     overflow: hidden;
     background: linear-gradient(180deg, #FAF7F2 0%, #EADDC9 100%) !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%;
 }
 
 .green-box {
@@ -2076,6 +2077,7 @@ main {
     justify-content: space-between;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     min-height: 400px;
+    height: 100%;
 }
 
 /* Hiệu ứng nhấp nháy focus khi rê chuột vào thiết bị */

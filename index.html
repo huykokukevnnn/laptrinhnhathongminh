@@ -786,19 +786,6 @@
                     <!-- Bong bóng hiển thị tên thiết bị động -->
                     <div class="device-tooltip" id="program-device-tooltip">Tên đồ vật</div>
                 </div>
-
-                <!-- Bảng tóm tắt liên kết học sinh đang lập trình (Sẽ cập nhật thời gian thực) -->
-                <div class="test-left-section" style="background: rgba(255, 255, 255, 0.7); border: 1.5px solid var(--border-glass); border-radius: 16px; padding: 1rem; width: 100%;">
-                    <div class="test-title-desc" style="padding-bottom: 0.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(15,23,42,0.08);">
-                        <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--neon-cyan);">Bản đồ bộ não AI bạn đang lập trình:</h4>
-                    </div>
-                    <div class="custom-rules-table-card" style="max-height: 140px; overflow-y: auto;">
-                        <div id="program-rules-table-body" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                            <!-- JS tự động cập nhật bảng này thời gian thực -->
-                            <div class="rule-item-row" style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 0.5rem;">Chưa có thiết bị nào được lập trình.</div>
-                        </div>
-                    </div>
-                </div>
             </div> <!-- Kết thúc programming-column-left -->
 
             <!-- KHỐI BÊN PHẢI (Blue outline box) -->
@@ -815,8 +802,21 @@
                             </div>
                         </div>
 
+                        <!-- Bảng tóm tắt liên kết học sinh đang lập trình (Sẽ cập nhật thời gian thực) -->
+                        <div class="test-left-section" style="background: rgba(15, 23, 42, 0.03); border: 1px solid rgba(15, 23, 42, 0.08); border-radius: 16px; padding: 1rem; width: 100%;">
+                            <div class="test-title-desc" style="padding-bottom: 0.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(15,23,42,0.08);">
+                                <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--neon-cyan);">Bản đồ bộ não AI bạn đang lập trình:</h4>
+                            </div>
+                            <div class="custom-rules-table-card" style="max-height: 140px; overflow-y: auto;">
+                                <div id="program-rules-table-body" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                                    <!-- JS tự động cập nhật bảng này thời gian thực -->
+                                    <div class="rule-item-row" style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 0.5rem;">Chưa có thiết bị nào được lập trình.</div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Vùng gán lệnh và hiệu ứng -->
-                        <div class="assign-action-container" style="text-align: center; margin: 1rem 0; min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
+                        <div class="assign-action-container" style="text-align: center; margin: 0.5rem 0; min-height: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
                             <!-- Nút tròn "+" gán lệnh (chỉ hiện khi click chọn thiết bị) -->
                             <button type="button" class="btn-plus-round" id="btn-assign-plus" style="display: none; position: relative;">
                                 +
@@ -882,18 +882,6 @@
                         <div class="inner-room-container" id="inner-room-container-test"></div>
                         <div class="device-tooltip" id="test-device-tooltip">Tên đồ vật</div>
                     </div>
-
-                    <!-- Bảng tóm tắt liên kết học sinh đã lập trình -->
-                    <div class="test-left-section" style="background: rgba(255, 255, 255, 0.7); border: 1.5px solid var(--border-glass); border-radius: 16px; padding: 1rem; width: 100%;">
-                        <div class="test-title-desc" style="padding-bottom: 0.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(15,23,42,0.08);">
-                            <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--neon-purple);">Bản đồ bộ não AI bạn vừa lập trình:</h4>
-                        </div>
-                        <div class="custom-rules-table-card" style="max-height: 140px; overflow-y: auto;">
-                            <div id="custom-rules-table-body" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                                <!-- Điền các hàng liên kết tại đây -->
-                            </div>
-                        </div>
-                    </div>
                 </div> <!-- Kết thúc programming-column-left -->
 
                 <!-- KHỐI BÊN PHẢI (Blue outline box) -->
@@ -906,6 +894,18 @@
                                 <div class="luna-chat-bubble" style="min-height: 120px;">
                                     <strong>Trợ Lý LUNA (Smart AI)</strong>
                                     <span id="test-luna-speech-text">Huấn luyện thành công! Bạn hãy nhấn các nút nói bên dưới hoặc click trực tiếp vào đồ vật để xem tôi thực thi hành động thế nào nhé!</span>
+                                </div>
+                            </div>
+
+                            <!-- Bảng tóm tắt liên kết học sinh đã lập trình -->
+                            <div class="test-left-section" style="background: rgba(15, 23, 42, 0.03); border: 1px solid rgba(15, 23, 42, 0.08); border-radius: 16px; padding: 1rem; width: 100%;">
+                                <div class="test-title-desc" style="padding-bottom: 0.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(15,23,42,0.08);">
+                                    <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--neon-purple);">Bản đồ bộ não AI bạn vừa lập trình:</h4>
+                                </div>
+                                <div class="custom-rules-table-card" style="max-height: 140px; overflow-y: auto;">
+                                    <div id="custom-rules-table-body" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                                        <!-- Điền các hàng liên kết tại đây -->
+                                    </div>
                                 </div>
                             </div>
 
