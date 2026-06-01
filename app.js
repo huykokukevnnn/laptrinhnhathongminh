@@ -528,49 +528,171 @@ const App = {
     renderTestCommandsGrid() {
         const container = document.getElementById('test-quick-commands-container');
         container.innerHTML = '';
+        container.style.cssText = "display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.6rem; background: rgba(15, 23, 42, 0.03); border: 1px solid rgba(15, 23, 42, 0.08); border-radius: 16px; padding: 1rem; width: 100%;";
 
-        // Chỉ tạo nút kiểm tra cho các thiết bị đã được nối lập trình gán dây
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        if (SpeechRecognition) {
+            // 1. RENDER MICROPHONE UI
+            const statusDiv = document.createElement('div');
+            statusDiv.id = 'mic-status-text';
+            statusDiv.style.cssText = "font-size: 0.82rem; font-weight: 700; color: var(--text-muted); text-align: center; min-height: 24px; transition: all 0.3s ease;";
+            statusDiv.innerText = "Nhấn nút Mic bên dưới và nói câu lệnh để kiểm tra... 🎙️";
+            container.appendChild(statusDiv);
+
+            const micBtn = document.createElement('button');
+            micBtn.type = 'button';
+            micBtn.className = 'btn-mic-trigger btn-mic-round';
+            micBtn.style.cssText = "width: 56px; height: 56px; border-radius: 50%; background: var(--grad-primary); border: none; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow-cyan); position: relative;";
+            micBtn.innerHTML = `
+                <svg id="mic-icon-svg" style="width: 22px; height: 22px; fill: white;" viewBox="0 0 24 24">
+                    <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
+                </svg>
+                <div class="mic-pulse-ring" id="mic-pulse-ring-element" style="display: none; width: 56px; height: 56px;"></div>
+            `;
+            container.appendChild(micBtn);
+
+            // Setup Speech Recognition
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'vi-VN';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            let isListening = false;
+
+            const stopListeningVisuals = () => {
+                isListening = false;
+                micBtn.classList.remove('recording');
+                const pulseRing = micBtn.querySelector('#mic-pulse-ring-element');
+                if (pulseRing) pulseRing.style.display = 'none';
+                statusDiv.style.color = 'var(--text-muted)';
+            };
+
+            micBtn.addEventListener('click', () => {
+                if (isListening) {
+                    recognition.stop();
+                } else {
+                    try {
+                        recognition.start();
+                        isListening = true;
+                        micBtn.classList.add('recording');
+                        const pulseRing = micBtn.querySelector('#mic-pulse-ring-element');
+                        if (pulseRing) pulseRing.style.display = 'block';
+                        statusDiv.innerText = "LUNA đang lắng nghe bạn nói... 🎙️";
+                        statusDiv.style.color = 'var(--neon-green)';
+                    } catch (err) {
+                        console.error("Speech error", err);
+                    }
+                }
+            });
+
+            recognition.onresult = (event) => {
+                stopListeningVisuals();
+                const spoken = event.results[0][0].transcript;
+                statusDiv.innerHTML = `Bạn vừa nói: <span style="color: var(--neon-cyan)">"${spoken}"</span>`;
+
+                const matchedLeftId = this.findMatchingLeftId(spoken);
+                if (matchedLeftId) {
+                    this.executeTestSpeechCommand(matchedLeftId, spoken);
+                } else {
+                    SoundManager.playError();
+                    const reply = `🤖 LUNA: Tôi nghe thấy câu nói "${spoken}", nhưng kịch bản bạn lập trình chưa gán câu này cho thiết bị nào cả. Hãy thử nói câu khác nhé!`;
+                    document.getElementById('test-luna-speech-text').innerText = reply;
+                }
+            };
+
+            recognition.onerror = (event) => {
+                stopListeningVisuals();
+                if (event.error === 'no-speech') {
+                    statusDiv.innerText = "Không nghe thấy tiếng nói. Hãy thử lại! 🎙️";
+                } else {
+                    statusDiv.innerText = "Lỗi mic. Vui lòng cho phép quyền truy cập mic! ⚠️";
+                }
+            };
+
+            recognition.onend = () => {
+                stopListeningVisuals();
+            };
+
+        } else {
+            // 2. FALLBACK INPUT TEXT UI FOR UNSUPPORTED BROWSERS
+            const titleLabel = document.createElement('div');
+            titleLabel.style.cssText = "font-size: 0.82rem; font-weight: 700; color: var(--text-muted); width: 100%; text-align: left;";
+            titleLabel.innerText = "Nhập câu lệnh để kiểm tra bộ não AI:";
+            container.appendChild(titleLabel);
+
+            const inputContainer = document.createElement('div');
+            inputContainer.className = 'fallback-input-container';
+            inputContainer.style.cssText = "display: flex; gap: 0.5rem; width: 100%;";
+
+            const textInput = document.createElement('input');
+            textInput.type = 'text';
+            textInput.className = 'fallback-text-input';
+            textInput.placeholder = 'Ví dụ: Bật quạt, Tắt tivi, Nóng quá...';
+            textInput.style.cssText = "flex: 1; border: 1px solid var(--border-glass); border-radius: 12px; padding: 0.5rem 0.75rem; font-size: 0.82rem; outline: none; background: rgba(255,255,255,0.9);";
+            inputContainer.appendChild(textInput);
+
+            const sendBtn = document.createElement('button');
+            sendBtn.type = 'button';
+            sendBtn.className = 'fallback-send-btn';
+            sendBtn.innerText = "Gửi 🚀";
+            sendBtn.style.cssText = "background: var(--grad-primary); border: none; color: white; border-radius: 12px; padding: 0 1rem; font-weight: 700; font-size: 0.82rem; cursor: pointer;";
+            inputContainer.appendChild(sendBtn);
+
+            container.appendChild(inputContainer);
+
+            const triggerTextCommand = () => {
+                const text = textInput.value.trim();
+                if (!text) return;
+                textInput.value = '';
+
+                const matchedLeftId = this.findMatchingLeftId(text);
+                if (matchedLeftId) {
+                    this.executeTestSpeechCommand(matchedLeftId, text);
+                } else {
+                    SoundManager.playError();
+                    const reply = `🤖 LUNA: Tôi nhận được câu lệnh "${text}", nhưng kịch bản bạn lập trình chưa gán câu này cho thiết bị nào cả. Hãy thử nhập câu khác nhé!`;
+                    document.getElementById('test-luna-speech-text').innerText = reply;
+                }
+            };
+
+            sendBtn.addEventListener('click', triggerTextCommand);
+            textInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') triggerTextCommand();
+            });
+        }
+    },
+
+    findMatchingLeftId(spokenText) {
+        if (!spokenText) return null;
+        const cleanedSpoken = spokenText.toLowerCase().trim().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g,"");
+        
+        let bestLeftId = null;
+        let maxMatchScore = 0;
+
         for (let leftId in GameData.connections) {
             const leftCard = GameData.leftCards.find(c => c.id === leftId);
             if (!leftCard) continue;
 
-            const btn = document.createElement('button');
-            btn.className = 'btn-quick-test';
-            btn.style.cssText = "background: rgba(22, 163, 74, 0.08); border: 1.5px solid rgba(22, 163, 74, 0.3); color: var(--neon-green); font-family: var(--font-primary); font-weight: 700; border-radius: 12px; height: 44px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; padding: 0.5rem 0.8rem; font-size: 0.85rem;";
-            btn.innerHTML = `
-                <span style="font-size: 1.1rem;">${leftCard.icon}</span>
-                Nói: "${leftCard.text}"
-            `;
-            btn.addEventListener('click', () => {
-                this.executeTestSpeechCommand(leftId, leftCard.text);
-            });
-            container.appendChild(btn);
+            const cleanedRule = leftCard.text.toLowerCase().trim().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g,"");
+
+            // 1. Khớp tuyệt đối hoặc chứa cụm từ
+            if (cleanedSpoken.includes(cleanedRule) || cleanedRule.includes(cleanedSpoken)) {
+                return leftId;
+            }
+
+            // 2. So khớp tương đồng từ vựng (Word overlap)
+            const spokenWords = cleanedSpoken.split(/\s+/);
+            const ruleWords = cleanedRule.split(/\s+/);
+            const intersection = spokenWords.filter(w => ruleWords.includes(w));
+            
+            const score = intersection.length / Math.max(spokenWords.length, ruleWords.length);
+            if (score > 0.4 && score > maxMatchScore) {
+                maxMatchScore = score;
+                bestLeftId = leftId;
+            }
         }
-
-        // Bổ sung thêm các nút tắt độc lập để học sinh dễ kiểm soát các thiết bị chính
-        const extraCommands = [
-            { id: "tv_off", text: "Tắt tivi", devName: "tv" },
-            { id: "fridge_close", text: "Đóng tủ lạnh", devName: "fridge" }
-        ];
-
-        extraCommands.forEach(cmd => {
-            const btn = document.createElement('button');
-            btn.className = 'btn-quick-test';
-            btn.style.cssText = "background: rgba(15, 23, 42, 0.04); border: 1.5px solid var(--border-glass); color: var(--text-muted); font-family: var(--font-primary); font-weight: 700; border-radius: 12px; height: 44px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; padding: 0.5rem 0.8rem; font-size: 0.85rem;";
-            btn.innerHTML = `
-                <span>⚙️</span>
-                Nói: "${cmd.text}"
-            `;
-            btn.addEventListener('click', () => {
-                SoundManager.playSuccess();
-                this.toggleDevice(cmd.devName, false);
-                const reply = cmd.devName === 'tv'
-                    ? `🤖 LUNA: Đã tắt tivi treo tường theo câu nói "${cmd.text}". Đèn LED đã tắt.`
-                    : `🤖 LUNA: Đã đóng khít tủ lạnh theo câu nói "${cmd.text}" để tiết kiệm điện.`;
-                document.getElementById('test-luna-speech-text').innerText = reply;
-            });
-            container.appendChild(btn);
-        });
+        return bestLeftId;
     },
 
     renderCustomRulesTable() {
