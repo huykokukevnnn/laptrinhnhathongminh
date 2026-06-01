@@ -49,11 +49,10 @@
         
         <!-- MÀN HÌNH BẮT ĐẦU (INTRO SCREEN) -->
         <section id="intro-screen" class="screen-container active">
-            <div class="intro-content">
-                <div class="intro-title">
-                    <h2>Ứng Dụng AI Vào Đời Sống</h2>
-                    <p>Khám phá cách Trí tuệ Nhân tạo phân tích ngôn ngữ hàng ngày để vận hành một ngôi nhà thông minh Smart Home, và tự tay lập trình bộ não cho một AI mới tinh theo cách của riêng bạn!</p>
-                </div>
+            <div class="intro-grid">
+                <!-- CỘT BÊN TRÁI: NGÔI NHÀ VÀ HƯỚNG DẪN -->
+                <div class="intro-left-column">
+                    <div class="exterior-house-card">
 
                                  <svg class="exterior-house-svg" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
                         <defs>
@@ -278,7 +277,7 @@
                         <line x1="500" y1="375" x2="540" y2="375" stroke="#e2e8f0" stroke-width="2.5" stroke-dasharray="10 10" opacity="0.8" />
                         <line x1="580" y1="375" x2="620" y2="375" stroke="#e2e8f0" stroke-width="2.5" stroke-dasharray="10 10" opacity="0.8" />
                     </svg>
-                </div>
+                </div> <!-- Đóng exterior-house-card -->
 
                 <div class="intro-instruction">
                     <div class="finger-pointer">
@@ -288,8 +287,17 @@
                     </div>
                     <p>Nhấp vào Cánh cửa có khóa AI để vào nhà</p>
                 </div>
+            </div> <!-- Đóng intro-left-column -->
+
+            <!-- CỘT BÊN PHẢI: TIÊU ĐỀ VÀ MÔ TẢ -->
+            <div class="intro-right-column">
+                <div class="intro-title">
+                    <h2>Ứng Dụng AI Vào Đời Sống</h2>
+                    <p>Khám phá cách Trí tuệ Nhân tạo phân tích ngôn ngữ hàng ngày để vận hành một ngôi nhà thông minh Smart Home, và tự tay lập trình bộ não cho một AI mới tinh theo cách của riêng bạn!</p>
+                </div>
             </div>
-        </section>
+        </div> <!-- Đóng intro-grid -->
+    </section>
 
         
         <!-- GIAI ĐOẠN 2: LẬP TRÌNH AI MỚI (PHASE 2 SCREEN) -->
