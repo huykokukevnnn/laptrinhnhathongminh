@@ -317,8 +317,16 @@
                                 <div class="room-status-dot"></div>
                                 <h3>Phòng Khách Thông Minh - Thiết Kế Lập Trình</h3>
                             </div>
-                            <div class="connection-count-badge" id="program-device-status-badge">
-                                Đang chọn thiết bị... 🧠
+                            <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                <div class="temp-badge" id="program-temp-badge" style="font-weight: 700; color: var(--neon-pink); border: 1.5px solid rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.08); padding: 2px 10px; border-radius: 20px; font-size: 0.8rem; display: flex; align-items: center; gap: 0.25rem;">
+                                    🌡️ <span class="temp-val">28</span>°C
+                                </div>
+                                <div class="light-cycle-badge" id="program-light-cycle-badge" style="font-weight: 700; color: var(--neon-yellow); border: 1.5px solid rgba(202, 138, 4, 0.3); background: rgba(202, 138, 4, 0.08); padding: 2px 10px; border-radius: 20px; font-size: 0.8rem; display: flex; align-items: center; gap: 0.25rem;">
+                                    ☀️ <span class="cycle-text">Trời Sáng</span>
+                                </div>
+                                <div class="connection-count-badge" id="program-device-status-badge">
+                                    Đang chọn thiết bị... 🧠
+                                </div>
                             </div>
                         </div>
 
@@ -426,6 +434,8 @@
                             <g id="device-glassdoor">
                                 <!-- Khung cửa sổ / Ban công phía sau -->
                                 <rect x="820" y="110" width="150" height="234" fill="url(#balconySky)" rx="6" />
+                                <!-- Lớp phủ bóng tối ban đêm cho cửa sổ ban công -->
+                                <rect class="balcony-night-overlay" x="820" y="110" width="150" height="234" rx="6" fill="#070a13" opacity="0" style="pointer-events: none;" />
                                 
                                 <!-- Hậu cảnh mây bay ngoài trời ban công -->
                                 <g fill="#ffffff" opacity="0.6">
@@ -780,6 +790,8 @@
                                     </g>
                                 </g>
                             </g>
+                            <!-- Lớp chứa các mẫu rác kéo thả -->
+                            <g id="trash-layer"></g>
                         </svg>
                     </div>
 
@@ -791,58 +803,35 @@
             <!-- KHỐI BÊN PHẢI (Blue outline box) -->
             <div class="programming-column-right" style="display: flex; flex-direction: column; gap: 1.25rem;">
                 <!-- 2. PHẦN CHATBOX VỚI LUNA - HÌNH CHỮ NHẬT MÀU XANH (Green Box) -->
-                <div class="green-box" id="luna-program-chatbox">
-                    <div class="ai-right-section" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between; min-height: 380px;">
+                <div class="green-box" id="luna-program-chatbox" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div class="ai-right-section" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between; gap: 1rem; min-height: 420px;">
                         
                         <!-- AI trả lời (Bóng thoại LUNA) -->
                         <div class="luna-chat-bubble-container">
-                            <div class="luna-chat-bubble" style="min-height: 140px;">
+                            <div class="luna-chat-bubble" style="min-height: 110px; padding: 0.8rem 1.25rem;">
                                 <strong>Trợ Lý LUNA (Smart AI)</strong>
-                                <span id="luna-speech-text">Chào bạn! Hãy đưa chuột nhấp chọn vào đồ vật trong căn phòng bên trái để bắt đầu gán câu lệnh nhé!</span>
+                                <span id="luna-speech-text">Chào bạn! Hãy nhấn nút "+" để tạo thêm luật liên kết "Nếu... Thì..." gán chức năng cho các thiết bị nhé!</span>
                             </div>
                         </div>
 
-                        <!-- Bảng tóm tắt liên kết học sinh đang lập trình (Sẽ cập nhật thời gian thực) -->
-                        <div class="test-left-section" style="background: rgba(15, 23, 42, 0.03); border: 1px solid rgba(15, 23, 42, 0.08); border-radius: 16px; padding: 1rem; width: 100%;">
-                            <div class="test-title-desc" style="padding-bottom: 0.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(15,23,42,0.08);">
+                        <!-- Bảng tóm tắt liên kết học sinh đang lập trình (BẢNG QUẢN LÝ QUY TẮC MỚI) -->
+                        <div class="test-left-section" style="background: rgba(15, 23, 42, 0.03); border: 1px solid rgba(15, 23, 42, 0.08); border-radius: 16px; padding: 0.8rem; width: 100%; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div class="test-title-desc" style="padding-bottom: 0.4rem; margin-bottom: 0.4rem; border-bottom: 1px solid rgba(15,23,42,0.08);">
                                 <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--neon-cyan);">Bản đồ bộ não AI bạn đang lập trình:</h4>
                             </div>
-                            <div class="custom-rules-table-card" style="max-height: 140px; overflow-y: auto;">
-                                <div id="program-rules-table-body" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                                    <!-- JS tự động cập nhật bảng này thời gian thực -->
-                                    <div class="rule-item-row" style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 0.5rem;">Chưa có thiết bị nào được lập trình.</div>
-                                </div>
+                            <div class="custom-rules-table-card" id="rules-editor-container" style="max-height: 240px; overflow-y: auto; flex: 1; margin-bottom: 0.5rem; padding-right: 4px;">
+                                <!-- Danh sách các quy tắc dạng Nếu... Thì... sẽ được render động ở đây -->
+                            </div>
+
+                            <!-- Nút Thêm Quy Tắc mới -->
+                            <div style="display: flex; justify-content: center; margin-top: 0.5rem;">
+                                <button type="button" class="btn-plus-round" id="btn-add-rule-row" style="margin: 0; width: 48px; height: 48px;">
+                                    <span class="plus-text">+</span>
+                                </button>
                             </div>
                         </div>
 
-                        <!-- Vùng gán lệnh và hiệu ứng -->
-                        <div class="assign-action-container" style="text-align: center; margin: 0.5rem 0; min-height: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
-                            <!-- Nút tròn "+" gán lệnh (chỉ hiện khi click chọn thiết bị) -->
-                            <button type="button" class="btn-plus-round" id="btn-assign-plus" style="display: none; position: relative;">
-                                <span class="plus-text">+</span>
-                                <!-- Dropdown menu danh sách chức năng để học sinh lựa chọn -->
-                                <div class="dropdown-menu-list" id="assign-dropdown-menu">
-                                    <div class="dropdown-item-action" data-action="fan_on">Bật/Tắt quạt đứng</div>
-                                    <div class="dropdown-item-action" data-action="tv_on">Bật/Tắt tivi</div>
-                                    <div class="dropdown-item-action" data-action="light_on">Bật/Tắt đèn LED</div>
-                                    <div class="dropdown-item-action" data-action="speaker_on">Bật/Tắt loa đứng</div>
-                                    <div class="dropdown-item-action" data-action="vacuum_on">Kích hoạt robot hút bụi</div>
-                                    <div class="dropdown-item-action" data-action="fridge_open">Mở/Đóng tủ lạnh</div>
-                                    <div class="dropdown-item-action" data-action="ac_on">Bật/Tắt máy lạnh</div>
-                                    <div class="dropdown-item-action" data-action="glassdoor_open">Mở/Đóng cửa kính</div>
-                                </div>
-                            </button>
-
-                            <!-- Vùng hiển thị hiệu ứng dấu tick -->
-                            <div class="checkmark-circle" id="checkmark-success" style="display: none;">
-                                <svg class="checkmark-icon" viewBox="0 0 52 52">
-                                    <circle cx="26" cy="26" r="25" fill="none"/>
-                                    <path d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-                                </svg>
-                            </div>
-                        </div>
-
-                        <!-- Nút Lưu và Kiểm Tra nằm dưới dấu "+" -->
+                        <!-- Nút Lưu và Kiểm Tra nằm dưới -->
                         <div class="programming-action-buttons" style="display: flex; gap: 1rem; width: 100%;">
                             <button class="btn-header accent" id="btn-save-programming" style="flex: 1; justify-content: center; font-weight: 750; background: var(--grad-primary); border-radius: 12px; height: 48px; border: none; color: white;">
                                 Lưu Lập Trình
@@ -874,8 +863,26 @@
                                 <div class="room-status-dot" style="background-color:var(--neon-purple); box-shadow:var(--shadow-purple);"></div>
                                 <h3>Phòng Khách - Thử Nghiệm AI Mới</h3>
                             </div>
-                            <div class="connection-count-badge" style="color:var(--neon-purple); border-color:var(--border-glass-active);">
-                                AI Mới đang hoạt động... 🧠
+                            <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                <div class="temp-badge" id="test-temp-badge" style="font-weight: 700; color: var(--neon-pink); border: 1.5px solid rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.08); padding: 2px 10px; border-radius: 20px; font-size: 0.8rem; display: flex; align-items: center; gap: 0.25rem;">
+                                    🌡️ <span class="temp-val">28</span>°C
+                                </div>
+                                <div class="light-cycle-badge" id="test-light-cycle-badge" style="font-weight: 700; color: var(--neon-yellow); border: 1.5px solid rgba(202, 138, 4, 0.3); background: rgba(202, 138, 4, 0.08); padding: 2px 10px; border-radius: 20px; font-size: 0.8rem; display: flex; align-items: center; gap: 0.25rem;">
+                                    ☀️ <span class="cycle-text">Trời Sáng</span>
+                                </div>
+                                <div class="connection-count-badge" style="color:var(--neon-purple); border-color:var(--border-glass-active);">
+                                    AI Mới đang hoạt động... 🧠
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Thùng rác chứa các đồ vật rác để kéo vào phòng -->
+                        <div class="trash-bin-container" id="trash-bin-container" style="position: absolute; top: 60px; left: 20px; z-index: 100; background: rgba(15, 23, 42, 0.85); border: 1px solid var(--neon-cyan); border-radius: 12px; padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; align-items: center; box-shadow: var(--shadow-cyan);">
+                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--neon-cyan); margin-bottom: 2px;">Giỏ Rác Kéo Thả 🗑️</div>
+                            <div class="trash-items-list" style="display: flex; gap: 0.5rem;">
+                                <div class="trash-item" draggable="true" data-type="tissue" style="width: 32px; height: 32px; border-radius: 6px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; cursor: grab;" title="Giấy ăn">🧻</div>
+                                <div class="trash-item" draggable="true" data-type="plastic_bag" style="width: 32px; height: 32px; border-radius: 6px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; cursor: grab;" title="Bọc nilon">🛍️</div>
+                                <div class="trash-item" draggable="true" data-type="plastic_cup" style="width: 32px; height: 32px; border-radius: 6px; background: #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; cursor: grab;" title="Ly nhựa">🥤</div>
+                                <div class="trash-item" draggable="true" data-type="plastic_bottle" style="width: 32px; height: 32px; border-radius: 6px; background: #94a3b8; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; cursor: grab;" title="Chai nhựa">🧴</div>
                             </div>
                         </div>
                         <div class="party-glow-overlay"></div>
@@ -894,6 +901,16 @@
                                 <div class="luna-chat-bubble" style="min-height: 120px;">
                                     <strong>Trợ Lý LUNA (Smart AI)</strong>
                                     <span id="test-luna-speech-text">Huấn luyện thành công! Bạn hãy nhấn các nút nói bên dưới hoặc click trực tiếp vào đồ vật để xem tôi thực thi hành động thế nào nhé!</span>
+                                </div>
+                            </div>
+
+                            <!-- Bảng tóm tắt liên kết học sinh đã lập trình -->
+                            <div class="test-left-section" style="background: rgba(15, 23, 42, 0.03); border: 1px solid rgba(15, 23, 42, 0.08); border-radius: 16px; padding: 0.8rem; width: 100%; display: flex; flex-direction: column;">
+                                <div class="test-title-desc" style="padding-bottom: 0.4rem; margin-bottom: 0.4rem; border-bottom: 1px solid rgba(15,23,42,0.08);">
+                                    <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--neon-cyan);">Bộ não AI đã được nạp:</h4>
+                                </div>
+                                <div id="test-rules-summary-container" style="max-height: 120px; overflow-y: auto; padding-right: 4px; display: flex; flex-direction: column; gap: 0.4rem;">
+                                    <!-- Danh sách các quy tắc sẽ được hiển thị tĩnh ở đây -->
                                 </div>
                             </div>
 

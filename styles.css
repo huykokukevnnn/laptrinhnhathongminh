@@ -2394,4 +2394,161 @@ main {
     box-shadow: var(--shadow-cyan);
 }
 
+/* --- BẢNG LẬP TRÌNH QUY TẮC MỚI (RULES EDITOR) --- */
+.rules-editor-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 10px;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.6rem;
+    transition: all 0.25s ease;
+}
+
+.rules-editor-row:hover {
+    background: #ffffff;
+    border-color: rgba(6, 182, 212, 0.3); /* Neon Cyan */
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.06);
+}
+
+.rule-label {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.rule-select {
+    flex: 1;
+    min-width: 0; /* Cho phép co lại trên màn hình nhỏ */
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: #ffffff;
+    color: #1e293b;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0 0.5rem;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.rule-select:focus {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
+}
+
+.rule-select:disabled {
+    background: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+    border-color: rgba(15, 23, 42, 0.06);
+}
+
+.btn-delete-rule {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-delete-rule:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    transform: scale(1.15);
+}
+
+/* THÙNG RÁC KÉO THẢ */
+.trash-bin-container {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.trash-bin-container:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+}
+
+.trash-item {
+    transition: transform 0.2s ease;
+    user-select: none;
+}
+
+.trash-item:hover {
+    transform: scale(1.2);
+}
+
+.trash-item:active {
+    cursor: grabbing;
+}
+
+/* Rác trên sàn */
+.trash-item-in-room {
+    animation: trashSpawn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes trashSpawn {
+    0% {
+        transform: scale(0) rotate(-45deg);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1) rotate(0);
+        opacity: 1;
+    }
+}
+
+/* HIỆU ỨNG ĐÊM CHO PHÒNG & BAN CÔNG */
+.balcony-night-overlay {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.inner-room-container.night-time .balcony-night-overlay {
+    opacity: 0.9;
+}
+
+/* Điều chỉnh độ mờ phòng theo chu kỳ sáng tối */
+.inner-room-container::after {
+    opacity: 0.12 !important; /* Mặc định ban ngày: sáng sủa hơn */
+}
+
+.inner-room-container.night-time::after {
+    opacity: 0.82 !important; /* Ban đêm: tối thui */
+}
+
+/* Đè khi bật Đèn LED */
+.inner-room-container.device-light-on::after {
+    opacity: 0 !important; /* Sáng choang */
+}
+
+.inner-room-container.night-time.device-light-on::after {
+    opacity: 0.1 !important; /* Đêm bật đèn: hơi vàng dịu nhẹ */
+}
+
+/* Chuyển đổi 5 giây khi chập tối */
+.inner-room-container.transition-5s::after,
+.inner-room-container.transition-5s .balcony-night-overlay {
+    transition: opacity 5s ease !important;
+}
+
+/* Khi robot đang dọn rác, tắt animation tuần hoàn */
+.vacuum-cleaning-active .vacuum-body {
+    animation: none !important;
+}
+
+#device-vacuum {
+    transition: transform 1.2s ease-in-out;
+}
+
+
 
