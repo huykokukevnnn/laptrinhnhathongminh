@@ -1999,3 +1999,297 @@ main {
     }
 }
 
+/* --- PHỤ TRỢ: NHIỆT ĐỘ & TAB & RÁC MỚI --- */
+
+/* Temperature Badge */
+.temp-display-badge {
+    background: rgba(15, 23, 42, 0.05);
+    border: 1px solid var(--border-glass);
+    padding: 0.4rem 0.8rem;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+}
+
+.temp-display-badge .temp-icon {
+    font-size: 1rem;
+}
+
+/* Tab Programming Interface */
+.tab-programming-container {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1.5px solid var(--border-glass);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: var(--shadow-glass);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    min-height: 480px;
+}
+
+.tab-headers-bar {
+    display: flex;
+    gap: 0.5rem;
+    background: rgba(15, 23, 42, 0.03);
+    padding: 0.75rem 1rem;
+    border-bottom: 1.5px solid var(--border-glass);
+    align-items: center;
+    overflow-x: auto;
+}
+
+.tab-header-btn {
+    padding: 0.6rem 1.1rem;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    background: rgba(255, 255, 255, 0.6);
+    color: var(--text-muted);
+    font-family: var(--font-primary);
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    white-space: nowrap;
+}
+
+.tab-header-btn:hover {
+    background: #ffffff;
+    color: var(--text-main);
+    transform: translateY(-1px);
+}
+
+.tab-header-btn.active {
+    background: var(--grad-primary);
+    color: #ffffff;
+    border-color: var(--neon-cyan);
+    box-shadow: var(--shadow-cyan);
+}
+
+.tab-header-btn.btn-add-tab {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+    border: 1px dashed rgba(16, 185, 129, 0.3);
+    padding: 0.6rem 0.9rem;
+}
+
+.tab-header-btn.btn-add-tab:hover {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: #10b981;
+}
+
+.tab-content-panel {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.tab-device-info {
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    border-left: 3px solid var(--neon-cyan);
+    padding-left: 0.75rem;
+}
+
+.tab-device-info strong {
+    color: var(--text-main);
+    font-size: 1.05rem;
+}
+
+.device-rules-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.rule-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid var(--border-glass);
+    padding: 0.75rem 1.25rem;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    animation: fadeIn 0.3s ease;
+}
+
+.rule-label {
+    font-weight: 800;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.rule-label.if-label {
+    color: var(--neon-cyan);
+}
+
+.rule-label.then-label {
+    color: var(--neon-purple);
+}
+
+.rule-select {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-glass);
+    background: #ffffff;
+    font-family: var(--font-primary);
+    font-size: 0.88rem;
+    color: var(--text-main);
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.rule-select:focus {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 8px rgba(2, 132, 199, 0.12);
+}
+
+.btn-delete-rule {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.btn-delete-rule:hover {
+    background: #ef4444;
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+.btn-add-rule {
+    align-self: flex-start;
+    padding: 0.7rem 1.25rem;
+    border-radius: 12px;
+    border: 1.5px dashed var(--neon-cyan);
+    background: rgba(2, 132, 199, 0.04);
+    color: var(--neon-cyan);
+    font-family: var(--font-primary);
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.btn-add-rule:hover {
+    background: rgba(2, 132, 199, 0.08);
+    border-style: solid;
+    box-shadow: var(--shadow-cyan);
+    transform: translateY(-1px);
+}
+
+/* Floating Trash Generator Panel */
+.trash-generator-panel {
+    position: absolute;
+    top: 75px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1.5px solid var(--border-glass-active);
+    padding: 0.75rem 1rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08), var(--shadow-glass);
+    z-index: 10;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.trash-panel-header {
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: var(--text-main);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border-glass);
+    padding-bottom: 0.25rem;
+}
+
+.trash-panel-sub {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    line-height: 1.3;
+}
+
+.trash-items-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+}
+
+.trash-item-draggable {
+    background: #ffffff;
+    border: 1px solid var(--border-glass);
+    padding: 0.4rem 0.5rem;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: all 0.2s ease;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.trash-item-draggable:hover {
+    background: rgba(2, 132, 199, 0.05);
+    border-color: var(--neon-cyan);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.trash-item-draggable:active {
+    cursor: grabbing;
+}
+
+/* Trash in the Room (SVG) */
+.trash-spawned {
+    cursor: pointer;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.5s ease;
+    transform-origin: center;
+}
+
+.trash-flying {
+    transform: translate(168px, 325px) scale(0.3) !important;
+    opacity: 0;
+}
+
+.simulation-btn {
+    font-weight: 700;
+    border-style: dashed !important;
+}
+
+.simulation-btn:hover {
+    border-style: solid !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+}
+
+

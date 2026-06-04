@@ -308,8 +308,14 @@
                             <div class="room-status-dot"></div>
                             <h3>Phòng Khách Thông Minh Tối Giản</h3>
                         </div>
-                        <div class="connection-count-badge">
-                            AI đang hoạt động 🧠
+                        <div style="display: flex; gap: 0.75rem; align-items: center;">
+                            <div class="temp-display-badge">
+                                <span class="temp-icon">🌡️</span>
+                                <span class="temp-val">30</span>°C
+                            </div>
+                            <div class="connection-count-badge">
+                                AI đang hoạt động 🧠
+                            </div>
                         </div>
                     </div>
 
@@ -771,6 +777,17 @@
                                     </g>
                                 </g>
                             </g>
+
+                            <!-- THÙNG RÁC GÓC PHÒNG KHÁCH -->
+                            <g id="room-trash-bin" filter="url(#ambientShadow)">
+                                <rect x="155" y="325" width="25" height="30" fill="#475569" rx="3" stroke="#1e293b" stroke-width="1"/>
+                                <rect x="152" y="321" width="31" height="5" fill="#64748b" rx="1.5"/>
+                                <rect x="163" y="318" width="9" height="4" fill="#64748b" rx="1"/>
+                                <path d="M 163 333 L 166 338 L 170 333 M 165 338 L 169 338" stroke="#94a3b8" stroke-width="1" fill="none"/>
+                            </g>
+
+                            <!-- LỚP CHỨA RÁC TRÊN SÀN NHÀ -->
+                            <g id="room-trash-layer"></g>
                         </svg>
                     </div>
 
@@ -848,31 +865,35 @@
                 
                 <div class="programming-intro">
                     <h3>Giai Đoạn 2: Huấn Luyện Bộ Não Cho AI Mới Tinh</h3>
-                    <p>Bây giờ bạn sẽ được tiếp quản một <strong>Trí tuệ nhân tạo mới tinh chưa có bất cứ dữ liệu nào</strong>! Trò chơi nối chữ dưới đây cho phép bạn tự do quyết định: Khi học sinh nói câu gì thì AI phải thực thi hành động gì. 
-                    <br>💡 <strong>Sáng tạo tối đa:</strong> Bạn có thể nối chéo lệch hoàn toàn (ví dụ: nói <i>"Sàn nhà dơ quá đi"</i> nhưng lại dạy AI <i>"Cửa kính trượt mở ra ban công"</i>). Hãy kết nối tất cả 8 thẻ để xem AI mới học và thực thi kỳ diệu như thế nào nhé!</p>
+                    <p>Bây giờ bạn sẽ được tiếp quản một <strong>Trí tuệ nhân tạo mới tinh chưa có bất cứ dữ liệu nào</strong>! Hãy thiết lập quy tắc logic: khi nghe thấy câu nói tương ứng, AI sẽ tự động kích hoạt hành động thiết bị đã chọn.
+                    <br>💡 <strong>Hướng dẫn:</strong> Chọn thiết bị ở các tab, bấm <strong>Thêm Câu Lệnh Mới</strong> để tạo quy tắc dạng "Nếu ... Thì ...". Bấm nút <code>+</code> để thêm thiết bị khác.</p>
                 </div>
 
-                <!-- BẢNG KÉO THẢ NỐI DÂY ĐỘNG (MATCHING CANVAS) -->
-                <div class="matching-canvas-container" id="matching-drag-container">
-                    
-                    <!-- Khung SVG Overlay vẽ dây neon -->
-                    <svg class="connections-svg-overlay" id="connections-svg"></svg>
-
-                    <!-- Cột bên trái: Lời nói / Ngữ cảnh -->
-                    <div class="matching-column left" id="left-cards-column"></div>
-
-                    <!-- Cột bên phải: Hành động thiết bị -->
-                    <div class="matching-column right" id="right-cards-column"></div>
-
+                <!-- BẢNG LẬP TRÌNH DẠNG TABS CÂU LỆNH -->
+                <div class="tab-programming-container">
+                    <div class="tab-headers-bar" id="tab-headers">
+                        <!-- JS tự động thêm các tab thiết bị -->
+                    </div>
+                    <div class="tab-content-panel" id="tab-content">
+                        <div class="tab-device-info" id="active-device-info">
+                            <!-- JS tự động thêm thông tin thiết bị -->
+                        </div>
+                        <div class="device-rules-list" id="active-device-rules">
+                            <!-- JS tự động thêm danh sách quy tắc Nếu - Thì -->
+                        </div>
+                        <button class="btn-add-rule" id="btn-add-new-rule">
+                            ➕ Thêm Câu Lệnh Mới cho Thiết Bị
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Thanh nút bấm dưới bảng lập trình -->
                 <div class="programming-actions">
                     <button class="btn-programming clear" id="btn-clear-connections">
-                        Xóa tất cả các nối dây
+                        Xóa tất cả thiết lập
                     </button>
                     <div class="connection-count-badge">
-                        Đã lập trình: <span id="connections-count">0</span> / 8 liên kết
+                        Số thiết bị đã lập trình: <span id="connections-count">0</span>
                     </div>
                     <button class="btn-programming submit" id="btn-submit-programming">
                         Hoàn thành Lập trình & Đi Test thử AI 🚀
@@ -894,12 +915,30 @@
                             <div class="room-status-dot" style="background-color:var(--neon-purple); box-shadow:var(--shadow-purple);"></div>
                             <h3>Phòng Khách - Thử Nghiệm AI Mới Của Bạn</h3>
                         </div>
-                        <div class="connection-count-badge" style="color:var(--neon-purple); border-color:var(--border-glass-active);">
-                            AI Mới đang học... 🧠
+                        <div style="display: flex; gap: 0.75rem; align-items: center;">
+                            <div class="temp-display-badge">
+                                <span class="temp-icon">🌡️</span>
+                                <span class="temp-val">30</span>°C
+                            </div>
+                            <div class="connection-count-badge" style="color:var(--neon-purple); border-color:var(--border-glass-active);">
+                                AI Mới đang học... 🧠
+                            </div>
                         </div>
                     </div>
                     <div class="party-glow-overlay"></div>
                     <div class="inner-room-container" id="inner-room-container-test"></div>
+                    
+                    <!-- Widget giỏ rác để kéo thả bỏ rác vào phòng -->
+                    <div class="trash-generator-panel" id="trash-panel">
+                        <div class="trash-panel-header">🗑️ Giỏ Rác Học Tập</div>
+                        <div class="trash-panel-sub">Kéo thả rác vào phòng hoặc click để spawn</div>
+                        <div class="trash-items-container">
+                            <div class="trash-item-draggable" data-type="tissue" draggable="true" title="Kéo thả vào phòng">🧻 Giấy ăn</div>
+                            <div class="trash-item-draggable" data-type="plastic_bag" draggable="true" title="Kéo thả vào phòng">🛍️ Bọc nilon</div>
+                            <div class="trash-item-draggable" data-type="plastic_cup" draggable="true" title="Kéo thả vào phòng">🥤 Ly nhựa</div>
+                            <div class="trash-item-draggable" data-type="plastic_bottle" draggable="true" title="Kéo thả vào phòng">🍼 Chai nhựa</div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- BÊN DƯỚI: KHUNG ĐIỀU KHIỂN THỬ NGHIỆM AI TỰ HUẤN LUYỆN (VIỀN TÍM/ĐỎ) -->

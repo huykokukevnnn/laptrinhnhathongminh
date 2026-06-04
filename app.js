@@ -161,31 +161,224 @@ const GameData = {
     commandsTestedSet: new Set(),
     requiredCommandsToUnlock: 3,
 
-    // Giai đoạn 2: Bảng dữ liệu thẻ cột Trái & Phải (Scrambled & Mapped to 8 Devices)
-    leftCards: [
-        { id: "L1", text: "Bật quạt thổi mát", icon: "💨" },
-        { id: "L2", text: "Hôm nay trời nóng quá", icon: "☀️" },
-        { id: "L3", text: "Tối quá không thấy đường", icon: "🌙" },
-        { id: "L4", text: "Hôm nay ăn gì nhỉ?", icon: "🍎" },
-        { id: "L5", text: "Hãy mở cửa kính ban công", icon: "🚪" },
-        { id: "L6", text: "Sàn nhà dơ quá đi", icon: "🧹" },
-        { id: "L7", text: "Bật tivi xem tin tức", icon: "📺" },
-        { id: "L8", text: "Bật loa phát nhạc giải trí", icon: "🎵" }
-    ],
+    // Mối liên kết lập trình dạng If-Then: [ { device: 'fan', command: 'Trời nóng quá', action: 'fan_on' }, ... ]
+    connections: []
+};
 
-    rightCards: [
-        { id: "R1", actionKey: "fan_on", text: "Cánh quạt quay thổi gió", desc: "Quạt đứng quay tít" },
-        { id: "R2", actionKey: "ac_on", text: "Điều hòa thổi gió mát lạnh", desc: "Máy lạnh thổi sóng gió" },
-        { id: "R3", actionKey: "light_on", text: "Bật đèn LED áp tường thắp sáng", desc: "Hai đèn LED áp tường thắp sáng" },
-        { id: "R4", actionKey: "fridge_open", text: "Mở cửa tủ lạnh tìm đồ ăn", desc: "Cửa tủ lạnh 2 cánh mở lật phát sáng" },
-        { id: "R5", actionKey: "glassdoor_open", text: "Cửa kính trượt mở ra ban công", desc: "Hai cánh kính trượt mở sang hai bên" },
-        { id: "R6", actionKey: "vacuum_on", text: "Robot chạy trượt đi hút bụi", desc: "Robot hút bụi trượt đi dọn dẹp" },
-        { id: "R7", actionKey: "tv_on", text: "Mở màn hình Tivi nhiễu sóng", desc: "Tivi hoạt động hiển thị nhiễu trắng đen" },
-        { id: "R8", actionKey: "speaker_on", text: "Loa dạng trụ quẩy nhạc nốt bay", desc: "Cột LED loa sáng và nốt nhạc bay lên" }
-    ],
+// Cấu hình các tùy chọn cho từng thiết bị trong Phase 2
+const DeviceOptions = {
+    fan: {
+        name: "Quạt điện",
+        icon: "💨",
+        commands: ["Trời nóng quá", "Trời lạnh quá", "Bật quạt", "Tắt quạt"],
+        actions: [
+            { text: "Bật quạt đứng", value: "fan_on" },
+            { text: "Tắt quạt đứng", value: "fan_off" }
+        ]
+    },
+    ac: {
+        name: "Điều hòa",
+        icon: "❄️",
+        commands: ["Trời nóng quá", "Trời lạnh quá", "Bật máy lạnh", "Tắt máy lạnh"],
+        actions: [
+            { text: "Bật điều hòa", value: "ac_on" },
+            { text: "Tắt điều hòa", value: "ac_off" }
+        ]
+    },
+    tv: {
+        name: "Tivi treo tường",
+        icon: "📺",
+        commands: ["Tôi muốn xem phim", "Tôi không muốn xem phim nữa", "Bật tivi", "Tắt tivi"],
+        actions: [
+            { text: "Bật tivi", value: "tv_on" },
+            { text: "Tắt tivi", value: "tv_off" }
+        ]
+    },
+    fridge: {
+        name: "Tủ lạnh",
+        icon: "🍎",
+        commands: ["Tôi đói bụng", "Mở tủ lạnh", "Đóng tủ lạnh"],
+        actions: [
+            { text: "Mở tủ lạnh", value: "fridge_open" },
+            { text: "Đóng tủ lạnh", value: "fridge_close" }
+        ]
+    },
+    speaker: {
+        name: "Loa thông minh",
+        icon: "🎵",
+        commands: ["Tôi thấy yên tĩnh quá", "Tôi muốn nghe nhạc", "Bật loa", "Tắt loa"],
+        actions: [
+            { text: "Bật loa phát nhạc", value: "speaker_on" },
+            { text: "Tắt loa phát nhạc", value: "speaker_off" }
+        ]
+    },
+    vacuum: {
+        name: "Robot hút bụi",
+        icon: "🧹",
+        commands: ["Nhà dơ quá", "Nhà sạch rồi", "Bật robot hút bụi", "Tắt robot hút bụi"],
+        actions: [
+            { text: "Bật robot hút bụi", value: "vacuum_on" },
+            { text: "Tắt robot hút bụi", value: "vacuum_off" }
+        ]
+    },
+    light: {
+        name: "Hệ thống đèn",
+        icon: "💡",
+        commands: ["Trời tối rồi", "Tôi không thấy đường", "Bật đèn", "Tắt đèn"],
+        actions: [
+            { text: "Bật đèn chiếu sáng", value: "light_on" },
+            { text: "Tắt đèn chiếu sáng", value: "light_off" }
+        ]
+    }
+};
 
-    // Mối liên kết lập trình do học sinh nối (Left ID -> Right ID)
-    connections: {} // Cấu trúc: { "L1": "R3", "L2": "R1", ... }
+// Bộ quản lý chu kỳ ngày/đêm và mô phỏng nhiệt độ
+const CycleManager = {
+    duration: 240, // 240 giây một chu kỳ (2 phút sáng, 2 phút tối)
+    elapsed: 0,
+    intervalId: null,
+    isDay: true,
+    temp: 32,
+
+    start() {
+        if (this.intervalId) clearInterval(this.intervalId);
+        this.elapsed = 0;
+        this.isDay = true;
+        this.temp = 32;
+        this.intervalId = setInterval(() => {
+            this.elapsed = (this.elapsed + 1) % this.duration;
+            this.update();
+        }, 1000);
+        this.update();
+    },
+
+    toggleDayNight() {
+        if (this.isDay) {
+            this.elapsed = 120; // Chuyển sang bắt đầu ban đêm
+        } else {
+            this.elapsed = 0; // Chuyển sang bắt đầu ban ngày
+        }
+        this.update();
+    },
+
+    update() {
+        this.isDay = this.elapsed < 120;
+        
+        // Mô phỏng nhiệt độ:
+        // Ban ngày: Tăng dần từ 25 lên 32°C trong 40 giây đầu, duy trì ở 32°C
+        // Ban đêm: Giảm dần từ 32 xuống 25°C trong 40 giây đầu, duy trì ở 25°C
+        let dayRatio = 0;
+        if (this.isDay) {
+            if (this.elapsed < 40) {
+                dayRatio = this.elapsed / 40;
+                this.temp = 25 + (32 - 25) * dayRatio;
+            } else {
+                dayRatio = 1;
+                this.temp = 32;
+            }
+        } else {
+            const nightElapsed = this.elapsed - 120;
+            if (nightElapsed < 40) {
+                dayRatio = 1 - (nightElapsed / 40);
+                this.temp = 32 - (32 - 25) * (nightElapsed / 40);
+            } else {
+                dayRatio = 0;
+                this.temp = 25;
+            }
+        }
+        
+        this.temp = Math.round(this.temp);
+        
+        // Cập nhật text hiển thị nhiệt độ
+        document.querySelectorAll('.temp-val').forEach(el => {
+            el.textContent = this.temp;
+        });
+
+        // Cập nhật màu bầu trời và độ sáng phòng
+        this.updateVisuals(dayRatio);
+        
+        // Kiểm tra và kích hoạt các quy tắc tự động hóa nếu có lập trình
+        this.checkAutomatedRules();
+    },
+
+    updateVisuals(dayRatio) {
+        // Nội suy màu gradient của bầu trời ban công
+        const stop1_day = [2, 132, 199];
+        const stop1_night = [10, 15, 29];
+        
+        const stop2_day = [56, 189, 248];
+        const stop2_night = [22, 30, 56];
+        
+        const stop3_day = [186, 230, 253];
+        const stop3_night = [36, 50, 86];
+        
+        const interpolateColor = (c1, c2, ratio) => {
+            const r = Math.round(c1[0] + (c2[0] - c1[0]) * ratio);
+            const g = Math.round(c1[1] + (c2[1] - c1[1]) * ratio);
+            const b = Math.round(c1[2] + (c2[2] - c1[2]) * ratio);
+            return `rgb(${r}, ${g}, ${b})`;
+        };
+        
+        const color1 = interpolateColor(stop1_night, stop1_day, dayRatio);
+        const color2 = interpolateColor(stop2_night, stop2_day, dayRatio);
+        const color3 = interpolateColor(stop3_night, stop3_day, dayRatio);
+        
+        const balconySky = document.getElementById('balconySky');
+        if (balconySky) {
+            const stops = balconySky.querySelectorAll('stop');
+            if (stops.length >= 3) {
+                stops[0].setAttribute('stop-color', color1);
+                stops[1].setAttribute('stop-color', color2);
+                stops[2].setAttribute('stop-color', color3);
+            }
+        }
+        
+        // Làm mờ mây vào ban đêm
+        const clouds = document.getElementById('balcony-clouds');
+        if (clouds) {
+            clouds.style.opacity = (0.6 * dayRatio).toFixed(2);
+        }
+        
+        // Làm tối phòng theo thời gian
+        const isLightOn = GameData.deviceStates.light;
+        const roomDimOverlay = document.getElementById('roomDimOverlay');
+        if (roomDimOverlay) {
+            if (isLightOn) {
+                roomDimOverlay.style.opacity = '0';
+            } else {
+                // Tối tối đa ban đêm là 0.85, sáng ban ngày là 0.2
+                const maxDim = 0.85;
+                const minDim = 0.2;
+                const currentDim = minDim + (maxDim - minDim) * (1 - dayRatio);
+                roomDimOverlay.style.opacity = currentDim.toFixed(2);
+            }
+        }
+    },
+
+    checkAutomatedRules() {
+        if (App.currentScreen !== 'testing') return;
+        
+        // 1. Tự động bật đèn khi trời tối
+        const lightOnRule = App.checkRuleForDevice('light', ['Trời tối rồi', 'Tôi không thấy đường'], 'light_on');
+        if (!this.isDay && !GameData.deviceStates.light && lightOnRule) {
+            App.toggleDevice('light', true);
+            App.appendChatMessage('🤖 Trợ Lý LUNA: Phát hiện trời tối! Cảm biến tự động bật đèn theo lập trình của bạn. 💡', 'ai');
+        }
+        
+        // 2. Tự động bật điều hòa khi nóng (>= 32°C)
+        const acOnRule = App.checkRuleForDevice('ac', ['Trời nóng quá'], 'ac_on');
+        if (this.temp >= 32 && !GameData.deviceStates.ac && acOnRule) {
+            App.toggleDevice('ac', true);
+            App.appendChatMessage('🤖 Trợ Lý LUNA: Phát hiện nhiệt độ đạt 32°C! Tự động bật máy lạnh theo lập trình. ❄️', 'ai');
+        }
+        
+        // 3. Tự động tắt điều hòa khi lạnh (<= 25°C)
+        const acOffRule = App.checkRuleForDevice('ac', ['Trời lạnh quá'], 'ac_off');
+        if (this.temp <= 25 && GameData.deviceStates.ac && acOffRule) {
+            App.toggleDevice('ac', false);
+            App.appendChatMessage('🤖 Trợ Lý LUNA: Phát hiện nhiệt độ giảm xuống 25°C! Tự động tắt máy lạnh theo lập trình. 🌡️', 'ai');
+        }
+    }
 };
 
 // --- 3. KHỞI TẠO VÀ BẮT ĐẦU APP ---
@@ -195,15 +388,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const App = {
     currentScreen: 'intro',
-    activeDragDot: null,
-    dragStartCoords: null,
-    tempCable: null,
+    activeDeviceTabs: ['fan', 'light'],
+    activeDeviceTab: 'fan',
 
     init() {
         this.bindGlobalEvents();
         this.initPhase1();
         this.initPhase2();
         
+        // Khởi động vòng lặp sáng/tối và nhiệt độ
+        CycleManager.start();
+
         // Mặc định cập nhật giao diện Dashboard
         this.updateDashboardUI();
     },
@@ -237,7 +432,7 @@ const App = {
             step1.classList.remove('active');
             step2.classList.add('active');
             step2.classList.remove('completed');
-            this.updateConnectionLines(); // Vẽ lại dây nối phòng trường hợp kích thước thay đổi
+            this.renderTabProgramming();
         } else if (screenId === 'testing') {
             step1.classList.add('completed');
             step2.classList.add('completed');
@@ -316,13 +511,6 @@ const App = {
                 document.getElementById('chat-input-field').focus();
                 SoundManager.playBeep(650, 0.08);
             });
-        });
-
-        // Sự kiện resize màn hình vẽ lại dây cáp nối
-        window.addEventListener('resize', () => {
-            if (this.currentScreen === 'phase2') {
-                this.updateConnectionLines();
-            }
         });
     },
 
@@ -715,87 +903,24 @@ const App = {
                         console.log("Video auto-play blocked with sound, attempting muted: ", e);
                         // Fallback: Nếu trình duyệt quá khắt khe chặn phát tiếng, tắt tiếng để giữ video chạy mượt mà
                         tvVideo.muted = true;
-                        tvVideo.play().catch(err => console.log("Muted video play failed: ", err));
-                    });
-                } else {
-                    tvVideo.pause();
-                    tvVideo.currentTime = 0;
-                }
-            }
-        }
-
-        if (devName === 'fridge') {
-            // Xóa bộ hẹn giờ cũ nếu có
-            if (this.fridgeTimer) {
-                clearTimeout(this.fridgeTimer);
-                this.fridgeTimer = null;
-            }
-
-            if (targetState) {
-                // Nếu tủ lạnh đang mở, đặt hẹn giờ 5 giây tự động đóng & cảnh báo
-                this.fridgeTimer = setTimeout(() => {
-                    // Tự động đóng tủ lạnh
-                    this.toggleDevice('fridge', false);
-                    
-                    // Phát tiếng cảnh báo động cơ (còi báo động triple-beep sawtooth)
-                    SoundManager.playBeep(880, 0.12, 'sawtooth');
-                    setTimeout(() => SoundManager.playBeep(880, 0.12, 'sawtooth'), 180);
-                    setTimeout(() => SoundManager.playBeep(880, 0.12, 'sawtooth'), 360);
-
-                    // LUNA đưa ra tin nhắn cảnh báo
-                    const alertMsg = "Trợ Lý LUNA: Cảnh báo 🚨! Cửa tủ lạnh đã mở quá 5 giây. Tôi đã tự động đóng khít tủ lạnh để tiết kiệm điện năng.";
-                    this.appendChatMessage(alertMsg, 'luna');
-                    
-                    // Phát giọng nói LUNA phản hồi (nếu có Web Speech)
-                    if ('speechSynthesis' in window) {
-                        const utterance = new SpeechSynthesisUtterance("Cảnh báo. Tủ lạnh mở quá lâu đã tự động đóng.");
-                        utterance.lang = 'vi-VN';
-                        window.speechSynthesis.speak(utterance);
-                    }
-                }, 5000);
-            }
-        }
-
-        this.updateDashboardUI();
-
-        // Tự động đồng bộ hóa trạng thái nút xanh ở tab Test
-        if (this.currentScreen === 'testing') {
-            this.updateTestButtonsActiveState();
-        }
-    },
-
-    updateDashboardUI() {
-        const temp = document.getElementById('dash-temp');
-        const air = document.getElementById('dash-air');
-        const lock = document.getElementById('dash-lock');
-        
-        if (temp) temp.textContent = GameData.dashboardMetrics.temp;
-        if (air) {
-            air.textContent = GameData.dashboardMetrics.air;
-            air.style.fill = GameData.dashboardMetrics.air === "Ngột ngạt" ? "var(--neon-pink)" : "var(--neon-green)";
-        }
-        if (lock) {
-            lock.textContent = GameData.dashboardMetrics.lock;
-            lock.style.fill = GameData.dashboardMetrics.lock === "ĐANG KHÓA" ? "var(--neon-pink)" : "var(--neon-green)";
-        }
-    },
-
-    // --- GIAI ĐOẠN 2: TỰ TAY LẬP TRÌNH AI MỚI ---
+                        tvVideo.play().catch(err => console.log("Muted video     // --- GIAI ĐOẠN 2: TỰ TAY LẬP TRÌNH AI MỚI ---
     initPhase2() {
-        // Render danh sách thẻ hai cột trái và phải
-        this.renderMatchingCards();
+        this.activeDeviceTabs = ['fan', 'light'];
+        this.activeDeviceTab = 'fan';
+        this.renderTabProgramming();
 
         // Nút xóa tất cả kết nối
         document.getElementById('btn-clear-connections').addEventListener('click', () => {
             SoundManager.playBeep(350, 0.12, 'sawtooth');
-            this.clearAllConnections();
+            GameData.connections = [];
+            this.renderTabProgramming();
         });
 
         // Nút gửi nộp bộ nhớ lập trình AI
         document.getElementById('btn-submit-programming').addEventListener('click', () => {
-            const connectedCount = Object.keys(GameData.connections).length;
-            if (connectedCount < 8) {
-                alert(`Bạn mới chỉ nối được ${connectedCount} / 8 liên kết thôi. Hãy hoàn thành tất cả 8 câu nói để huấn luyện AI mới nhé!`);
+            const connectedCount = GameData.connections.length;
+            if (connectedCount < 1) {
+                alert(`Hãy thiết lập ít nhất 1 quy tắc câu lệnh để huấn luyện AI mới nhé!`);
                 SoundManager.playBeep(300, 0.2, 'sawtooth');
                 return;
             }
@@ -821,342 +946,241 @@ const App = {
             document.getElementById('modal-congrats-celebration').classList.remove('active');
             this.resetWholeGame();
         });
-
-        // Bắt đầu lắng nghe kéo thả
-        this.setupDragAndDropLogic();
     },
 
-    renderMatchingCards() {
-        const leftCol = document.getElementById('left-cards-column');
-        const rightCol = document.getElementById('right-cards-column');
+    renderTabProgramming() {
+        const headers = document.getElementById('tab-headers');
+        if (!headers) return;
+        headers.innerHTML = '';
+
+        // Render tab buttons for active devices
+        this.activeDeviceTabs.forEach(devKey => {
+            const dev = DeviceOptions[devKey];
+            const btn = document.createElement('button');
+            btn.className = `tab-header-btn ${devKey === this.activeDeviceTab ? 'active' : ''}`;
+            btn.innerHTML = `${dev.icon} ${dev.name}`;
+            btn.addEventListener('click', () => {
+                this.activeDeviceTab = devKey;
+                SoundManager.playBeep(600, 0.06, 'sine');
+                this.renderTabProgramming();
+            });
+            headers.appendChild(btn);
+        });
+
+        // Add "+" button if there are remaining devices
+        const remainingDevices = Object.keys(DeviceOptions).filter(k => !this.activeDeviceTabs.includes(k));
+        if (remainingDevices.length > 0) {
+            const addBtn = document.createElement('button');
+            addBtn.className = 'tab-header-btn btn-add-tab';
+            addBtn.innerHTML = '➕ Thêm thiết bị';
+            addBtn.addEventListener('click', () => {
+                SoundManager.playBeep(650, 0.08, 'sine');
+                this.showAddDeviceDropdown(addBtn, remainingDevices);
+            });
+            headers.appendChild(addBtn);
+        }
+
+        // Render the active tab content
+        this.renderActiveTabContent();
         
-        leftCol.innerHTML = '';
-        rightCol.innerHTML = '';
-
-        // Thuật toán xáo trộn Fisher-Yates ngẫu nhiên khoa học
-        const shuffle = (array) => {
-            const arr = [...array];
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
-            }
-            return arr;
-        };
-
-        // Xáo trộn độc lập 2 cột để tạo sự ngẫu nhiên tối đa đúng như yêu cầu
-        const shuffledLeft = shuffle(GameData.leftCards);
-        const shuffledRight = shuffle(GameData.rightCards);
-
-        // Tạo thẻ bên trái (Speech Commands)
-        shuffledLeft.forEach(card => {
-            const cardDiv = document.createElement('div');
-            cardDiv.className = 'matching-card';
-            cardDiv.id = `card-${card.id}`;
-            cardDiv.setAttribute('data-side', 'left');
-            cardDiv.setAttribute('data-id', card.id);
-            
-            cardDiv.innerHTML = `
-                <div class="card-content-desc">
-                    <span style="font-size: 1.15rem; margin-right: 6px;">${card.icon}</span>
-                    <span>"${card.text}"</span>
-                </div>
-                <div class="connector-dot" id="dot-${card.id}" data-id="${card.id}" data-side="left"></div>
-            `;
-            leftCol.appendChild(cardDiv);
-        });
-
-        // Tạo thẻ bên phải (Device Actions)
-        shuffledRight.forEach(card => {
-            const cardDiv = document.createElement('div');
-            cardDiv.className = 'matching-card';
-            cardDiv.id = `card-${card.id}`;
-            cardDiv.setAttribute('data-side', 'right');
-            cardDiv.setAttribute('data-id', card.id);
-            cardDiv.setAttribute('data-key', card.actionKey);
-            
-            cardDiv.innerHTML = `
-                <div class="card-content-desc">
-                    <div style="font-size:0.9rem; font-weight:700;">${card.text}</div>
-                    <div style="font-size:0.75rem; color:rgba(15,23,42,0.45); margin-top:2px;">${card.desc}</div>
-                </div>
-                <div class="connector-dot" id="dot-${card.id}" data-id="${card.id}" data-side="right"></div>
-            `;
-            rightCol.appendChild(cardDiv);
-        });
-    },
-
-    // Quản lý kéo thả mượt mà trên PC (Mouse) và Tablet (Touch)
-    setupDragAndDropLogic() {
-        const container = document.getElementById('matching-drag-container');
-        const svg = document.getElementById('connections-svg');
-
-        // Lắng nghe sự kiện bắt đầu ấn nút hoặc chạm ngón tay vào chốt Trái
-        container.addEventListener('mousedown', (e) => this.handleDragStart(e, false));
-        container.addEventListener('touchstart', (e) => this.handleDragStart(e, true), { passive: false });
-
-        // Lắng nghe di chuyển kéo dây
-        window.addEventListener('mousemove', (e) => this.handleDragMove(e, false));
-        window.addEventListener('touchmove', (e) => this.handleDragMove(e, true), { passive: false });
-
-        // Lắng nghe thả tay ra kết thúc kéo
-        window.addEventListener('mouseup', (e) => this.handleDragEnd(e, false));
-        window.addEventListener('touchend', (e) => this.handleDragEnd(e, true));
-    },
-
-    handleDragStart(e, isTouch) {
-        const target = e.target;
-        // Chỉ cho phép bắt đầu kéo từ Chốt Tròn thuộc cột TRÁI
-        if (!target.classList.contains('connector-dot') || target.getAttribute('data-side') !== 'left') {
-            return;
-        }
-
-        if (isTouch) e.preventDefault(); // Ngăn cuộn trang trên tablet khi đang kéo dây
-
-        const dotId = target.getAttribute('data-id');
-        
-        // Nếu chốt trái này đã có dây nối trước đó, hãy xóa dây cũ đó đi
-        if (GameData.connections[dotId]) {
-            delete GameData.connections[dotId];
-            this.playActionSound('click');
-            this.updateConnectionLines();
-        }
-
-        const coords = this.getDotCenter(target);
-
-        this.activeDragDot = target;
-        this.dragStartCoords = coords;
-
-        // Phát tiếng beep nhẹ khi bắt đầu kéo
-        SoundManager.playBeep(650, 0.05, 'sine');
-
-        // Tạo sợi dây mờ vẽ nháp ban đầu
-        this.createTempCable(coords.x, coords.y);
-    },
-
-    handleDragMove(e, isTouch) {
-        if (!this.activeDragDot) return;
-        if (isTouch) e.preventDefault(); // Ngăn cuộn màn hình khi đang vẽ dây
-
-        const clientX = isTouch ? e.touches[0].clientX : e.clientX;
-        const clientY = isTouch ? e.touches[0].clientY : e.clientY;
-        
-        const container = document.getElementById('matching-drag-container');
-        const containerRect = container.getBoundingClientRect();
-        
-        const currX = clientX - containerRect.left;
-        const currY = clientY - containerRect.top;
-
-        // Vẽ cập nhật uốn lượn Bezier cho dây kéo nháp
-        this.updateTempCable(this.dragStartCoords.x, this.dragStartCoords.y, currX, currY);
-
-        // Hiệu ứng "hút dính nam châm (snapping)" nếu rê chuột đến gần chốt phải
-        const dotsRight = document.querySelectorAll('.matching-column.right .connector-dot');
-        dotsRight.forEach(dot => {
-            const dotCoords = this.getDotCenter(dot);
-            const dist = Math.hypot(currX - dotCoords.x, currY - dotCoords.y);
-            
-            if (dist < 35) { // Snapping range 35px
-                dot.style.transform = 'scale(1.4)';
-                dot.style.backgroundColor = '#ffffff';
-            } else {
-                dot.style.transform = '';
-                dot.style.backgroundColor = '';
-            }
-        });
-    },
-
-    handleDragEnd(e, isTouch) {
-        if (!this.activeDragDot) return;
-
-        // Tháo dây nháp
-        if (this.tempCable) {
-            this.tempCable.remove();
-            this.tempCable = null;
-        }
-
-        // Tìm chốt bên phải gần nhất để nối
-        const leftDotId = this.activeDragDot.getAttribute('data-id');
-        let clientX, clientY;
-
-        if (isTouch) {
-            clientX = e.changedTouches[0].clientX;
-            clientY = e.changedTouches[0].clientY;
-        } else {
-            clientX = e.clientX;
-            clientY = e.clientY;
-        }
-
-        const container = document.getElementById('matching-drag-container');
-        const containerRect = container.getBoundingClientRect();
-        const endX = clientX - containerRect.left;
-        const endY = clientY - containerRect.top;
-
-        // Quét tìm chốt phải snap gần nhất
-        const dotsRight = document.querySelectorAll('.matching-column.right .connector-dot');
-        let targetRightDot = null;
-        let minDistance = 35; // Khoảng cách snap nam châm
-
-        dotsRight.forEach(dot => {
-            const dotCoords = this.getDotCenter(dot);
-            const dist = Math.hypot(endX - dotCoords.x, endY - dotCoords.y);
-            
-            // Hoàn trả thiết kế của dot
-            dot.style.transform = '';
-            dot.style.backgroundColor = '';
-
-            if (dist < minDistance) {
-                targetRightDot = dot;
-                minDistance = dist;
-            }
-        });
-
-        if (targetRightDot) {
-            const rightDotId = targetRightDot.getAttribute('data-id');
-            
-            // Ghi nhận liên kết thành công (đảm bảo 1-1, tháo liên kết cũ nếu có)
-            for (let leftKey in GameData.connections) {
-                if (GameData.connections[leftKey] === rightDotId) {
-                    delete GameData.connections[leftKey];
-                }
-            }
-
-            GameData.connections[leftDotId] = rightDotId;
-            SoundManager.playChime();
-        } else {
-            // Thả hụt, tháo dây không lưu
-            SoundManager.playBeep(350, 0.1, 'sine');
-        }
-
-        this.activeDragDot = null;
-        this.dragStartCoords = null;
-
-        // Vẽ lại toàn bộ dây cáp đã lưu
-        this.updateConnectionLines();
-    },
-
-    getDotCenter(dotElement) {
-        const container = document.getElementById('matching-drag-container');
-        const containerRect = container.getBoundingClientRect();
-        const dotRect = dotElement.getBoundingClientRect();
-        
-        return {
-            x: (dotRect.left + dotRect.width / 2) - containerRect.left,
-            y: (dotRect.top + dotRect.height / 2) - containerRect.top
-        };
-    },
-
-    createTempCable(x1, y1) {
-        const svg = document.getElementById('connections-svg');
-        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        path.setAttribute('class', 'neon-cable temp');
-        path.setAttribute('d', `M ${x1} ${y1} C ${x1 + 60} ${y1}, ${x1 + 60} ${y1}, ${x1} ${y1}`);
-        svg.appendChild(path);
-        this.tempCable = path;
-    },
-
-    updateTempCable(x1, y1, x2, y2) {
-        if (!this.tempCable) return;
-        const controlOffset = Math.max(80, Math.abs(x2 - x1) * 0.5);
-        const d = `M ${x1} ${y1} C ${x1 + controlOffset} ${y1}, ${x2 - controlOffset} ${y2}, ${x2} ${y2}`;
-        this.tempCable.setAttribute('d', d);
-    },
-
-    updateConnectionLines() {
-        const svg = document.getElementById('connections-svg');
-        // Xóa sạch các đường dẫn cũ
-        svg.innerHTML = '';
-
-        // Gỡ các class active connected cũ của thẻ
-        document.querySelectorAll('.matching-card').forEach(card => {
-            card.classList.remove('connected-left', 'connected-right');
-        });
-        document.querySelectorAll('.connector-dot').forEach(dot => {
-            dot.classList.remove('connected');
-        });
-
-        let activeCount = 0;
-
-        // Duyệt vẽ từng liên kết được lưu trữ
-        for (let leftId in GameData.connections) {
-            const rightId = GameData.connections[leftId];
-            
-            const dotLeft = document.getElementById(`dot-${leftId}`);
-            const dotRight = document.getElementById(`dot-${rightId}`);
-            
-            if (dotLeft && dotRight) {
-                activeCount++;
-                
-                // Đánh dấu thiết kế thẻ đã được nối dây
-                document.getElementById(`card-${leftId}`).classList.add('connected-left');
-                document.getElementById(`card-${rightId}`).classList.add('connected-right');
-                
-                dotLeft.classList.add('connected');
-                dotRight.classList.add('connected');
-
-                // Lấy tọa độ hai tâm chốt tròn
-                const start = this.getDotCenter(dotLeft);
-                const end = this.getDotCenter(dotRight);
-
-                // Đường vẽ neon
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                path.setAttribute('class', 'neon-cable');
-                
-                // Uốn cong sợi dây sang trọng
-                const controlOffset = Math.max(100, Math.abs(end.x - start.x) * 0.6);
-                const d = `M ${start.x} ${start.y} C ${start.x + controlOffset} ${start.y}, ${end.x - controlOffset} ${end.y}, ${end.x} ${end.y}`;
-                
-                path.setAttribute('d', d);
-                
-                // Phối màu sắc gradient sặc sỡ cho mỗi sợi dây nối khác nhau
-                const colors = ['var(--neon-cyan)', 'var(--neon-purple)', 'var(--neon-pink)', 'var(--neon-green)', 'var(--neon-orange)', 'var(--neon-yellow)'];
-                const strokeColor = colors[(activeCount - 1) % colors.length];
-                path.setAttribute('stroke', strokeColor);
-                path.style.filter = `drop-shadow(0 0 5px ${strokeColor})`;
-
-                svg.appendChild(path);
-            }
-        }
-
-        // Cập nhật số liên kết lên badge
+        // Update connections count badge
         const badgeCount = document.getElementById('connections-count');
-        badgeCount.textContent = activeCount;
+        if (badgeCount) {
+            badgeCount.textContent = `${this.activeDeviceTabs.length} thiết bị`;
+        }
 
+        // Enable or disable submit button based on rules
         const btnSubmit = document.getElementById('btn-submit-programming');
-        if (activeCount === 8) {
-            btnSubmit.style.opacity = '1';
-            btnSubmit.style.pointerEvents = 'auto';
-            btnSubmit.classList.add('pulse-lock');
-            btnSubmit.innerHTML = `Hoàn thành Lập trình & Đi Test thử AI 🚀`;
-        } else {
-            btnSubmit.style.opacity = '0.5';
-            btnSubmit.style.pointerEvents = 'none';
-            btnSubmit.classList.remove('pulse-lock');
-            btnSubmit.innerHTML = `Hãy nối đủ 8 dây để tiến hành`;
+        if (btnSubmit) {
+            if (GameData.connections.length > 0) {
+                btnSubmit.style.opacity = '1';
+                btnSubmit.style.pointerEvents = 'auto';
+                btnSubmit.classList.add('pulse-lock');
+                btnSubmit.innerHTML = `Hoàn thành Lập trình & Đi Test thử AI 🚀`;
+            } else {
+                btnSubmit.style.opacity = '0.5';
+                btnSubmit.style.pointerEvents = 'none';
+                btnSubmit.classList.remove('pulse-lock');
+                btnSubmit.innerHTML = `Hãy thiết lập ít nhất 1 quy tắc câu lệnh`;
+            }
         }
     },
 
-    clearAllConnections() {
-        GameData.connections = {};
-        this.updateConnectionLines();
+    showAddDeviceDropdown(anchorBtn, remainingDevices) {
+        const oldSelect = document.getElementById('device-select-overlay');
+        if (oldSelect) oldSelect.remove();
+
+        const rect = anchorBtn.getBoundingClientRect();
+        const selectDiv = document.createElement('div');
+        selectDiv.id = 'device-select-overlay';
+        selectDiv.style.position = 'absolute';
+        selectDiv.style.left = `${rect.left}px`;
+        selectDiv.style.top = `${rect.bottom + window.scrollY + 5}px`;
+        selectDiv.style.background = '#ffffff';
+        selectDiv.style.border = '1px solid var(--border-glass-active)';
+        selectDiv.style.borderRadius = '12px';
+        selectDiv.style.padding = '0.5rem';
+        selectDiv.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
+        selectDiv.style.zIndex = '1000';
+        selectDiv.style.display = 'flex';
+        selectDiv.style.flexDirection = 'column';
+        selectDiv.style.gap = '0.25rem';
+
+        remainingDevices.forEach(devKey => {
+            const dev = DeviceOptions[devKey];
+            const item = document.createElement('div');
+            item.style.padding = '0.5rem 1rem';
+            item.style.cursor = 'pointer';
+            item.style.borderRadius = '8px';
+            item.style.fontSize = '0.88rem';
+            item.style.fontWeight = '700';
+            item.style.color = 'var(--text-main)';
+            item.innerHTML = `${dev.icon} ${dev.name}`;
+            item.addEventListener('mouseenter', () => {
+                item.style.background = 'rgba(2, 132, 199, 0.05)';
+            });
+            item.addEventListener('mouseleave', () => {
+                item.style.background = 'transparent';
+            });
+            item.addEventListener('click', () => {
+                this.activeDeviceTabs.push(devKey);
+                this.activeDeviceTab = devKey;
+                SoundManager.playChime();
+                selectDiv.remove();
+                this.renderTabProgramming();
+            });
+            selectDiv.appendChild(item);
+        });
+
+        document.body.appendChild(selectDiv);
+
+        const clickOutside = (e) => {
+            if (!selectDiv.contains(e.target) && e.target !== anchorBtn) {
+                selectDiv.remove();
+                document.removeEventListener('click', clickOutside);
+            }
+        };
+        setTimeout(() => document.addEventListener('click', clickOutside), 10);
+    },
+
+    renderActiveTabContent() {
+        const info = document.getElementById('active-device-info');
+        const rulesList = document.getElementById('active-device-rules');
+        const devKey = this.activeDeviceTab;
+        const dev = DeviceOptions[devKey];
+
+        if (!info || !rulesList) return;
+
+        info.innerHTML = `Thiết bị: <strong>${dev.icon} ${dev.name}</strong>. Tạo quy tắc để dạy AI điều khiển thiết bị này.`;
+        rulesList.innerHTML = '';
+
+        const deviceRules = GameData.connections.filter(r => r.device === devKey);
+
+        if (deviceRules.length === 0) {
+            rulesList.innerHTML = `<div style="text-align:center; padding: 1.5rem; color: var(--text-muted); font-size: 0.88rem; font-style: italic;">Chưa có câu lệnh nào được lập trình cho thiết bị này. Hãy bấm nút dưới đây để thêm!</div>`;
+        } else {
+            deviceRules.forEach((rule, idx) => {
+                const row = document.createElement('div');
+                row.className = 'rule-row';
+
+                let commandOptionsHtml = `<option value="">-- Chọn câu lệnh --</option>`;
+                dev.commands.forEach(cmd => {
+                    commandOptionsHtml += `<option value="${cmd}" ${rule.command === cmd ? 'selected' : ''}>"${cmd}"</option>`;
+                });
+
+                let actionOptionsHtml = `<option value="">-- Chọn hành động --</option>`;
+                dev.actions.forEach(act => {
+                    actionOptionsHtml += `<option value="${act.value}" ${rule.action === act.value ? 'selected' : ''}>${act.text}</option>`;
+                });
+
+                row.innerHTML = `
+                    <span class="rule-label if-label">Nếu</span>
+                    <select class="rule-select rule-command" data-idx="${idx}">
+                        ${commandOptionsHtml}
+                    </select>
+                    <span class="rule-label then-label">Thì</span>
+                    <select class="rule-select rule-action" data-idx="${idx}">
+                        ${actionOptionsHtml}
+                    </select>
+                    <button class="btn-delete-rule" data-idx="${idx}" title="Xóa quy tắc này">&times;</button>
+                `;
+
+                const cmdSelect = row.querySelector('.rule-command');
+                const actSelect = row.querySelector('.rule-action');
+                const btnDel = row.querySelector('.btn-delete-rule');
+
+                const updateRule = () => {
+                    rule.command = cmdSelect.value;
+                    rule.action = actSelect.value;
+                    this.renderTabProgramming();
+                };
+
+                cmdSelect.addEventListener('change', updateRule);
+                actSelect.addEventListener('change', updateRule);
+                
+                btnDel.addEventListener('click', () => {
+                    const globalIdx = GameData.connections.indexOf(rule);
+                    if (globalIdx !== -1) {
+                        GameData.connections.splice(globalIdx, 1);
+                        SoundManager.playBeep(450, 0.1, 'sawtooth');
+                        this.renderTabProgramming();
+                    }
+                });
+
+                rulesList.appendChild(row);
+            });
+        }
+
+        const btnAddRule = document.getElementById('btn-add-new-rule');
+        const newBtnAddRule = btnAddRule.cloneNode(true);
+        btnAddRule.parentNode.replaceChild(newBtnAddRule, btnAddRule);
+
+        newBtnAddRule.addEventListener('click', () => {
+            GameData.connections.push({
+                device: devKey,
+                command: '',
+                action: ''
+            });
+            SoundManager.playBeep(600, 0.08, 'sine');
+            this.renderTabProgramming();
+        });
+    },
+
+    checkRuleForDevice(devKey, commandsArray, actionValue) {
+        return GameData.connections.some(rule => {
+            if (rule.device !== devKey) return false;
+            const matchCmd = commandsArray.includes(rule.command);
+            const matchAct = actionValue ? rule.action === actionValue : true;
+            return matchCmd && matchAct;
+        });
     },
 
     // --- GIAI ĐOẠN 2 - THỬ NGHIỆM AI TỰ HUẤN LUYỆN (TESTING) ---
     switchToTestingPhase() {
-        // Chuyển hình vẽ SVG phòng bên trong (từ container Giai đoạn 1) sang container Giai đoạn Test
         this.migrateRoomSVG('inner-room-container-test');
 
-        // Reset lại toàn bộ thiết bị đang chạy về OFF để bắt đầu test thuần khiết
         for (let dev in GameData.deviceStates) {
             this.toggleDevice(dev, false);
         }
 
-        // Tạo danh sách 6 nút bấm lệnh nhanh cho học sinh test tại cột bên phải
+        // Dọn sạch rác cũ
+        const trashLayer = document.getElementById('room-trash-layer');
+        if (trashLayer) trashLayer.innerHTML = '';
+        this.isRobotCleaning = false;
+        if (this.vacuumOffTimeout) clearTimeout(this.vacuumOffTimeout);
+
+        // Tạo 2-3 rác ngẫu nhiên
+        const numTrash = Math.floor(Math.random() * 2) + 2;
+        for (let i = 0; i < numTrash; i++) {
+            setTimeout(() => {
+                this.spawnRandomTrash();
+            }, i * 200);
+        }
+
         this.renderTestCommandsGrid();
-
-        // Tạo bảng mô tả quy tắc lập trình tùy biến
         this.renderCustomRulesTable();
+        this.initTrashDragging();
 
-        // Hiển thị màn hình test
         this.showScreen('testing');
     },
 
@@ -1173,86 +1197,77 @@ const App = {
         const container = document.getElementById('test-quick-commands-container');
         container.innerHTML = '';
 
-        // Hiển thị các nút nói nhanh từ các câu lập trình kéo dây
-        GameData.leftCards.forEach(card => {
+        const uniqueCommands = [];
+        GameData.connections.forEach(rule => {
+            if (!rule.command || !rule.action) return;
+            if (!uniqueCommands.includes(rule.command)) {
+                uniqueCommands.push(rule.command);
+            }
+        });
+
+        uniqueCommands.forEach(cmdText => {
             const btn = document.createElement('button');
             btn.className = 'btn-quick-test';
-            btn.id = `btn-test-${card.id}`;
             btn.innerHTML = `
                 <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-                Nói: "${card.text}"
+                Nói: "${cmdText}"
             `;
-            
             btn.addEventListener('click', () => {
-                this.executeCustomAICommand(card.id, card.text);
+                this.executeCustomAICommandText(cmdText);
             });
             container.appendChild(btn);
         });
 
-        // Bổ sung thêm 2 nút nói tắt độc lập để cưỡng chế reset Tivi và Tủ lạnh về ban đầu
-        const extraCommands = [
-            { id: "tv_off", text: "Tắt tivi", devName: "tv" },
-            { id: "fridge_close", text: "Đóng tủ lạnh", devName: "fridge" }
-        ];
-
-        extraCommands.forEach(cmd => {
-            const btn = document.createElement('button');
-            btn.className = 'btn-quick-test';
-            btn.id = `btn-test-${cmd.id}`;
-            btn.innerHTML = `
-                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-                Nói: "${cmd.text}"
-            `;
-            
-            btn.addEventListener('click', () => {
-                // Hệ thống cưỡng chế reset thiết bị về trạng thái Tắt ban đầu
-                SoundManager.playSuccess();
-                this.toggleDevice(cmd.devName, false);
-                
-                const reply = cmd.devName === 'tv'
-                    ? `🤖 Trợ Lý LUNA: Nhận tín hiệu câu nói "${cmd.text}". Đã tắt tivi treo tường. Đèn LED chỉ thị đã chuyển sang màu đỏ tắt nguồn.`
-                    : `🤖 Trợ Lý LUNA: Nhận tín hiệu câu nói "${cmd.text}". Đã đóng khít tủ lạnh để tiết kiệm điện năng cho bạn.`;
-                
-                document.getElementById('luna-speech-text').innerText = reply;
-            });
-            container.appendChild(btn);
+        // Thêm nút Thả rác giả lập
+        const btnTrash = document.createElement('button');
+        btnTrash.className = 'btn-quick-test simulation-btn';
+        btnTrash.style.borderColor = 'var(--neon-pink)';
+        btnTrash.style.color = 'var(--neon-pink)';
+        btnTrash.innerHTML = `🗑️ Thả rác ngẫu nhiên`;
+        btnTrash.addEventListener('click', () => {
+            this.spawnRandomTrash();
         });
+        container.appendChild(btnTrash);
 
-        // Cập nhật trạng thái kích hoạt của các nút kiểm thử ngay lập tức
+        // Thêm nút đổi Ngày/Đêm giả lập
+        const btnDayNight = document.createElement('button');
+        btnDayNight.className = 'btn-quick-test simulation-btn';
+        btnDayNight.style.borderColor = 'var(--neon-cyan)';
+        btnDayNight.style.color = 'var(--neon-cyan)';
+        btnDayNight.innerHTML = `🌗 Đổi Sáng/Tối`;
+        btnDayNight.addEventListener('click', () => {
+            CycleManager.toggleDayNight();
+        });
+        container.appendChild(btnDayNight);
+
         this.updateTestButtonsActiveState();
     },
 
     getDeviceFromActionKey(actionKey) {
-        switch (actionKey) {
-            case 'fan_on': return 'fan';
-            case 'ac_on': return 'ac';
-            case 'light_on': return 'light';
-            case 'fridge_open': return 'fridge';
-            case 'glassdoor_open': return 'glassdoor';
-            case 'vacuum_on': return 'vacuum';
-            case 'tv_on': return 'tv';
-            case 'speaker_on': return 'speaker';
-            default: return '';
-        }
+        if (!actionKey) return '';
+        const parts = actionKey.split('_');
+        return parts[0];
     },
 
     updateTestButtonsActiveState() {
-        GameData.leftCards.forEach(card => {
-            const btn = document.getElementById(`btn-test-${card.id}`);
-            if (!btn) return;
+        const container = document.getElementById('test-quick-commands-container');
+        if (!container) return;
 
-            const rightId = GameData.connections[card.id];
-            const rightCard = GameData.rightCards.find(c => c.id === rightId);
-            if (rightCard) {
-                const devName = this.getDeviceFromActionKey(rightCard.actionKey);
-                const isDeviceOn = GameData.deviceStates[devName];
-                if (isDeviceOn) {
+        const btns = container.querySelectorAll('.btn-quick-test:not(.simulation-btn)');
+        btns.forEach(btn => {
+            const textMatch = btn.textContent.match(/"([^"]+)"/);
+            if (textMatch) {
+                const cmdText = textMatch[1];
+                const rulesForCmd = GameData.connections.filter(r => r.command === cmdText);
+                const isAnyDeviceOn = rulesForCmd.some(rule => {
+                    const devName = this.getDeviceFromActionKey(rule.action);
+                    return GameData.deviceStates[devName] === true;
+                });
+                if (isAnyDeviceOn) {
                     btn.classList.add('active');
                 } else {
                     btn.classList.remove('active');
                 }
-            } else {
-                btn.classList.remove('active');
             }
         });
     },
@@ -1261,92 +1276,48 @@ const App = {
         const tbody = document.getElementById('custom-rules-table-body');
         tbody.innerHTML = '';
 
-        for (let leftId in GameData.connections) {
-            const rightId = GameData.connections[leftId];
-            
-            const leftCard = GameData.leftCards.find(c => c.id === leftId);
-            const rightCard = GameData.rightCards.find(c => c.id === rightId);
+        GameData.connections.forEach(rule => {
+            if (!rule.command || !rule.action) return;
+            const devOpt = DeviceOptions[rule.device];
+            const actionOpt = devOpt.actions.find(a => a.value === rule.action);
+            const actionText = actionOpt ? actionOpt.text : rule.action;
 
-            if (leftCard && rightCard) {
-                const row = document.createElement('div');
-                row.className = 'rule-item-row';
-                row.innerHTML = `
-                    <span class="rule-item-speech">"${leftCard.text}"</span>
-                    <span class="rule-item-arrow-icon">&gt;&gt;</span>
-                    <span class="rule-item-action">${rightCard.text}</span>
-                `;
-                tbody.appendChild(row);
-            }
-        }
+            const row = document.createElement('div');
+            row.className = 'rule-item-row';
+            row.innerHTML = `
+                <span class="rule-item-speech" style="display:flex; align-items:center; gap:4px;">
+                    <span style="font-size:0.85rem">${devOpt.icon}</span> "${rule.command}"
+                </span>
+                <span class="rule-item-arrow-icon">&gt;&gt;</span>
+                <span class="rule-item-action">${actionText}</span>
+            `;
+            tbody.appendChild(row);
+        });
     },
 
-    // THỰC THI CÂU LỆNH SAU KHI ĐƯỢC HUẤN LUYỆN (Chạy dạng trigger bật/tắt song song)
-    executeCustomAICommand(leftId, utteranceText) {
-        const rightId = GameData.connections[leftId];
-        const rightCard = GameData.rightCards.find(c => c.id === rightId);
+    executeCustomAICommandText(cmdText) {
+        const matchingRules = GameData.connections.filter(r => r.command === cmdText && r.action);
+        if (matchingRules.length === 0) return;
 
-        if (!rightCard) {
-            alert("Câu lệnh này chưa được lập trình dây kết nối!");
-            return;
-        }
-
-        const actionKey = rightCard.actionKey;
-        const devName = this.getDeviceFromActionKey(actionKey);
-        const targetState = !GameData.deviceStates[devName];
-        
-        // 1. Chạy âm thanh click phản hồi
         SoundManager.playSuccess();
+        let explanations = [];
 
-        // 2. Chạy logic kích hoạt thiết bị tương ứng (Giữ nguyên thiết bị cũ để chạy song song)
-        let runExplanation = "";
+        matchingRules.forEach(rule => {
+            const devName = rule.device;
+            const actionKey = rule.action;
+            const isTurnOn = actionKey.endsWith('_on') || actionKey.endsWith('_open');
 
-        // Ánh xạ các chức năng của thiết bị dạng toggle bật/tắt
-        this.toggleDevice(devName, targetState);
+            this.toggleDevice(devName, isTurnOn);
 
-        if (targetState) {
-            if (actionKey === 'fan_on') runExplanation = "Tôi đã cho xoay CÁNH QUẠT ĐIỆN.";
-            else if (actionKey === 'ac_on') runExplanation = "Tôi đã bật ĐIỀU HÒA thổi gió mát lạnh.";
-            else if (actionKey === 'light_on') runExplanation = "Tôi đã thắp sáng các ĐÈN LED ÁP TƯỜNG.";
-            else if (actionKey === 'fridge_open') runExplanation = "Tôi đã MỞ CỬA TỦ LẠNH 2 CÁNH ấm áp thức ăn.";
-            else if (actionKey === 'glassdoor_open') runExplanation = "Tôi đã trượt mở hai cánh CỬA KÍNH BAN CÔNG.";
-            else if (actionKey === 'vacuum_on') runExplanation = "Tôi đã kích hoạt ROBOT HÚT BỤI chạy dọn dẹp.";
-            else if (actionKey === 'tv_on') runExplanation = "Tivi đã được bật";
-            else if (actionKey === 'speaker_on') runExplanation = "Tôi đã bật Loa trụ quẩy nhạc nốt bay lơ lửng.";
-        } else {
-            if (actionKey === 'fan_on') runExplanation = "Tôi đã tắt CÁNH QUẠT ĐIỆN.";
-            else if (actionKey === 'ac_on') runExplanation = "Tôi đã tắt ĐIỀU HÒA.";
-            else if (actionKey === 'light_on') runExplanation = "Tôi đã tắt các ĐÈN LED ÁP TƯỜNG.";
-            else if (actionKey === 'fridge_open') runExplanation = "Tôi đã ĐÓNG CỬA TỦ LẠNH 2 CÁNH.";
-            else if (actionKey === 'glassdoor_open') runExplanation = "Tôi đã đóng hai cánh CỬA KÍNH BAN CÔNG.";
-            else if (actionKey === 'vacuum_on') runExplanation = "Tôi đã dừng ROBOT HÚT BỤI dọn dẹp.";
-            else if (actionKey === 'tv_on') runExplanation = "Tôi đã tắt màn hình TIVI.";
-            else if (actionKey === 'speaker_on') runExplanation = "Tôi đã dừng phát nhạc của LOA đứng.";
-        }
+            const devOpt = DeviceOptions[devName];
+            const actionOpt = devOpt.actions.find(a => a.value === actionKey);
+            const actionText = actionOpt ? actionOpt.text : actionKey;
+            explanations.push(`${devOpt.icon} ${actionText}`);
+        });
 
-        // 3. Phản hồi đầy hóm hỉnh của AI LUNA
-        // Kiểm tra xem học sinh có nối đúng chức năng logic thông thường không
-        const isStandardMatch = 
-            (leftId === 'L1' && actionKey === 'fan_on') ||
-            (leftId === 'L2' && actionKey === 'ac_on') ||
-            (leftId === 'L3' && actionKey === 'light_on') ||
-            (leftId === 'L4' && actionKey === 'fridge_open') ||
-            (leftId === 'L5' && actionKey === 'glassdoor_open') ||
-            (leftId === 'L6' && actionKey === 'vacuum_on') ||
-            (leftId === 'L7' && actionKey === 'tv_on') ||
-            (leftId === 'L8' && actionKey === 'speaker_on');
+        const reply = `🤖 Trí tuệ nhân tạo mới thông báo: Nhận tín hiệu câu nói "${cmdText}". Thực thi hành động: ${explanations.join(', ')}.`;
+        document.getElementById('luna-speech-text').innerText = reply;
 
-        let robotResponse = "";
-        if (isStandardMatch) {
-            robotResponse = `🤖 Trí tuệ nhân tạo mới thông báo: Nhận tín hiệu câu nói "${utteranceText}". Thực thi hành động: ${runExplanation}. Bạn đã dạy tôi một bài học logic rất chuẩn xác!`;
-        } else {
-            // Phản hồi hài hước khi học sinh nối chéo sáng tạo
-            robotResponse = `🤪 Haha! Bạn đã lập trình cho tôi rằng khi nghe câu "${utteranceText}" thì tôi phải: ${runExplanation}. Tôi thực hiện chính xác những gì bạn dạy đó! Thật là sáng tạo hết nấc!`;
-        }
-
-        // Thay đổi avatar text của LUNA
-        document.getElementById('luna-speech-text').innerText = robotResponse;
-        
-        // Tạo hiệu ứng nảy nhẹ quả cầu LUNA biểu cảm
         const orb = document.getElementById('luna-orb-element');
         if (orb) {
             orb.style.transform = 'scale(1.2) translateY(-10px)';
@@ -1356,12 +1327,158 @@ const App = {
         }
     },
 
+    // --- LOGIC KÉO THẢ VÀ TỰ ĐỘNG HÚT RÁC ---
+    initTrashDragging() {
+        const panel = document.getElementById('trash-panel');
+        if (!panel) return;
+
+        const items = panel.querySelectorAll('.trash-item-draggable');
+        items.forEach(item => {
+            item.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', item.getAttribute('data-type'));
+                SoundManager.playBeep(700, 0.05, 'sine');
+            });
+            item.addEventListener('click', () => {
+                this.spawnTrash(item.getAttribute('data-type'));
+                SoundManager.playChime();
+            });
+        });
+
+        const viewports = [
+            document.getElementById('room-viewport-container'),
+            document.getElementById('test-room-viewport-container')
+        ];
+
+        viewports.forEach(vp => {
+            if (!vp) return;
+            vp.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+            vp.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const type = e.dataTransfer.getData('text/plain');
+                if (type) {
+                    this.spawnTrash(type);
+                    SoundManager.playChime();
+                }
+            });
+        });
+    },
+
+    spawnTrash(type) {
+        const layer = document.getElementById('room-trash-layer');
+        if (!layer) return;
+
+        const rx = Math.floor(Math.random() * 300) + 350; // 350 đến 650
+        const ry = Math.floor(Math.random() * 30) + 370; // 370 đến 400
+
+        const emojiMap = {
+            tissue: '🧻',
+            plastic_bag: '🛍️',
+            plastic_cup: '🥤',
+            plastic_bottle: '🍼'
+        };
+
+        const emoji = emojiMap[type] || '🗑️';
+        const id = 'trash-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+
+        const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        group.setAttribute('class', 'trash-spawned');
+        group.setAttribute('id', id);
+        group.setAttribute('data-x', rx);
+        group.setAttribute('data-y', ry);
+        group.setAttribute('transform', `translate(${rx}, ${ry})`);
+
+        group.innerHTML = `
+            <text font-size="20" text-anchor="middle" dominant-baseline="middle">${emoji}</text>
+        `;
+
+        layer.appendChild(group);
+
+        this.triggerRobotVacuumCleaning();
+    },
+
+    spawnRandomTrash() {
+        const types = ['tissue', 'plastic_bag', 'plastic_cup', 'plastic_bottle'];
+        const randomType = types[Math.floor(Math.random() * types.length)];
+        this.spawnTrash(randomType);
+    },
+
+    isRobotCleaning: false,
+
+    triggerRobotVacuumCleaning() {
+        if (this.isRobotCleaning) return;
+        
+        const layer = document.getElementById('room-trash-layer');
+        if (!layer) return;
+        
+        const trashes = layer.querySelectorAll('.trash-spawned');
+        if (trashes.length === 0) {
+            if (GameData.deviceStates.vacuum) {
+                if (this.vacuumOffTimeout) clearTimeout(this.vacuumOffTimeout);
+                this.vacuumOffTimeout = setTimeout(() => {
+                    const remaining = layer.querySelectorAll('.trash-spawned');
+                    if (remaining.length === 0) {
+                        this.toggleDevice('vacuum', false);
+                        const vacuumBody = document.querySelector('.vacuum-body');
+                        if (vacuumBody) {
+                            vacuumBody.style.transition = 'transform 2s ease-in-out';
+                            vacuumBody.style.transform = 'translateX(0)';
+                        }
+                    }
+                }, 5000);
+            }
+            return;
+        }
+
+        if (this.currentScreen !== 'testing') return;
+        
+        const isRobotProgrammed = GameData.connections.some(r => r.device === 'vacuum' && r.action === 'vacuum_on');
+        if (!isRobotProgrammed) return;
+
+        if (!GameData.deviceStates.vacuum) {
+            this.toggleDevice('vacuum', true);
+            this.appendChatMessage('🤖 Trợ Lý LUNA: Phát hiện sàn nhà dơ! Robot hút bụi tự động dọn dẹp theo lập trình. 🧹', 'ai');
+        }
+
+        this.isRobotCleaning = true;
+        if (this.vacuumOffTimeout) {
+            clearTimeout(this.vacuumOffTimeout);
+            this.vacuumOffTimeout = null;
+        }
+
+        const firstTrash = trashes[0];
+        const tx = parseFloat(firstTrash.getAttribute('data-x'));
+
+        const vacuumBody = document.querySelector('.vacuum-body');
+        if (vacuumBody) {
+            vacuumBody.style.transition = 'transform 2s ease-in-out';
+            vacuumBody.style.transform = `translateX(${tx - 200}px)`;
+
+            setTimeout(() => {
+                this.animateTrashToBin(firstTrash);
+
+                setTimeout(() => {
+                    this.isRobotCleaning = false;
+                    this.triggerRobotVacuumCleaning();
+                }, 600);
+            }, 2000);
+        }
+    },
+
+    animateTrashToBin(trashElement) {
+        trashElement.classList.add('trash-flying');
+        SoundManager.playBeep(900, 0.1, 'sine');
+        
+        setTimeout(() => {
+            trashElement.remove();
+        }, 500);
+    },
+
     // --- HÀM TÁI LẬP TRÌNH & ĐẶT LẠI GAME TOÀN DIỆN ---
     resetWholeGame() {
-        // Trả hình vẽ SVG phòng về lại container Giai đoạn 1 ban đầu
         this.migrateRoomSVG('inner-room-container');
 
-        // Khôi phục tất cả biến trạng thái về mặc định
         GameData.deviceStates = {
             fan: false,
             light: false,
@@ -1377,7 +1494,7 @@ const App = {
         };
         GameData.commandsTestedCount = 0;
         GameData.commandsTestedSet.clear();
-        GameData.connections = {};
+        GameData.connections = [];
         SoundManager.stopRoyaltyFreeMusic();
         if (this.fridgeTimer) {
             clearTimeout(this.fridgeTimer);
@@ -1434,9 +1551,9 @@ const App = {
         const lst = document.getElementById('luna-speech-text');
         if (lst) lst.innerText = "Chào mừng bạn đã vào nhà! Tôi là bộ não AI kết nối các thiết bị. Hãy gõ một câu lệnh bên dưới để tôi hỗ trợ bạn nhé!";
 
-        // Reset bảng nối dây (xáo trộn lại từ đầu)
-        this.renderMatchingCards();
-        this.updateConnectionLines();
+        // Reset rác
+        const trashLayer = document.getElementById('room-trash-layer');
+        if (trashLayer) trashLayer.innerHTML = '';
 
         // Chuyển màn hình về Intro
         this.showScreen('intro');
