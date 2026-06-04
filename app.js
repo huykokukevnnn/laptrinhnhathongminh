@@ -1121,14 +1121,14 @@ const App = {
     checkAutomaticACRule() {
         // Kiểm tra xem đã lập trình máy lạnh tự động mở khi trời nóng
         const acRule = GameData.connections.find(r => r.device === 'ac' && r.command === 'Trời nóng quá' && r.actionKey === 'ac_on');
-        if (acRule) {
+        if (acRule && !GameData.deviceStates.ac) {
             this.executeRule(acRule);
             document.getElementById('test-luna-speech-text').innerText = "🤖 LUNA: Nhiệt độ ngoài trời tăng lên 32°C (Trời nóng quá)! Tôi tự động bật máy lạnh mát rượi.";
         }
 
         // Tương tự, kiểm tra xem có lập trình quạt mở khi trời nóng không
         const fanRule = GameData.connections.find(r => r.device === 'fan' && r.command === 'Trời nóng quá' && r.actionKey === 'fan_on');
-        if (fanRule) {
+        if (fanRule && !GameData.deviceStates.fan) {
             this.executeRule(fanRule);
             document.getElementById('test-luna-speech-text').innerText = "🤖 LUNA: Nhiệt độ ngoài trời tăng lên 32°C (Trời nóng quá)! Tôi tự động mở quạt đứng quay mát mẻ.";
         }
