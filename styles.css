@@ -2469,23 +2469,25 @@ main {
 /* THÙNG RÁC KÉO THẢ */
 .trash-bin-container {
     position: absolute;
-    top: 65px;
-    left: 20px;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 100;
     background: #232d38 !important;
     border: 2px solid #1e293b !important;
-    border-radius: 12px !important;
-    padding: 10px 12px !important;
+    border-top: none !important;
+    border-radius: 0 0 12px 12px !important;
+    padding: 6px 12px 8px 12px !important;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .trash-bin-container:hover {
-    transform: scale(1.02);
+    transform: translateX(-50%) scale(1.02);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
