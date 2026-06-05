@@ -864,25 +864,25 @@
                                 <h3>Phòng Khách - Thử Nghiệm AI Mới</h3>
                             </div>
                             <div style="display: flex; align-items: center; gap: 0.6rem;">
-                                <div class="temp-badge" id="test-temp-badge" style="font-weight: 700; color: var(--neon-pink); border: 1.5px solid rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.08); padding: 2px 10px; border-radius: 20px; font-size: 0.8rem; display: flex; align-items: center; gap: 0.25rem;">
-                                    🌡️ <span class="temp-val">28</span>°C
+                                <div class="temp-badge" id="test-temp-badge" style="font-weight: 700; color: #ef4444; border: 1.5px solid rgba(239, 68, 68, 0.35); background: rgba(239, 68, 68, 0.05); padding: 3px 12px; border-radius: 20px; font-size: 0.8rem; display: flex; align-items: center; gap: 0.25rem;">
+                                    🌡️ <span class="temp-val">27</span> °C
                                 </div>
-                                <div class="light-cycle-badge" id="test-light-cycle-badge" style="font-weight: 700; color: var(--neon-yellow); border: 1.5px solid rgba(202, 138, 4, 0.3); background: rgba(202, 138, 4, 0.08); padding: 2px 10px; border-radius: 20px; font-size: 0.8rem; display: flex; align-items: center; gap: 0.25rem;">
+                                <div class="light-cycle-badge" id="test-light-cycle-badge" style="font-weight: 700; color: #ca8a04; border: 1.5px solid rgba(202, 138, 4, 0.35); background: rgba(202, 138, 4, 0.05); padding: 3px 12px; border-radius: 20px; font-size: 0.8rem; display: flex; align-items: center; gap: 0.25rem;">
                                     ☀️ <span class="cycle-text">Trời Sáng</span>
                                 </div>
-                                <div class="connection-count-badge" style="color:var(--neon-purple); border-color:var(--border-glass-active);">
+                                <div class="connection-count-badge" style="font-weight: 700; color: #8b5cf6; border: 1.5px solid rgba(139, 92, 246, 0.35); background: rgba(139, 92, 246, 0.05); padding: 3px 12px; border-radius: 20px; font-size: 0.8rem; display: flex; align-items: center; gap: 0.25rem;">
                                     AI Mới đang hoạt động... 🧠
                                 </div>
                             </div>
                         </div>
                         <!-- Thùng rác chứa các đồ vật rác để kéo vào phòng -->
-                        <div class="trash-bin-container" id="trash-bin-container" style="position: absolute; top: 60px; left: 20px; z-index: 100; background: rgba(15, 23, 42, 0.85); border: 1px solid var(--neon-cyan); border-radius: 12px; padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; align-items: center; box-shadow: var(--shadow-cyan);">
-                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--neon-cyan); margin-bottom: 2px;">Giỏ Rác Kéo Thả 🗑️</div>
-                            <div class="trash-items-list" style="display: flex; gap: 0.5rem;">
-                                <div class="trash-item" draggable="true" data-type="tissue" style="width: 32px; height: 32px; border-radius: 6px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; cursor: grab;" title="Giấy ăn">🧻</div>
-                                <div class="trash-item" draggable="true" data-type="plastic_bag" style="width: 32px; height: 32px; border-radius: 6px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; cursor: grab;" title="Bọc nilon">🛍️</div>
-                                <div class="trash-item" draggable="true" data-type="plastic_cup" style="width: 32px; height: 32px; border-radius: 6px; background: #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; cursor: grab;" title="Ly nhựa">🥤</div>
-                                <div class="trash-item" draggable="true" data-type="plastic_bottle" style="width: 32px; height: 32px; border-radius: 6px; background: #94a3b8; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; cursor: grab;" title="Chai nhựa">🧴</div>
+                        <div class="trash-bin-container" id="trash-bin-container">
+                            <div class="trash-bin-title">Giỏ Rác Kéo Thả 🗑️</div>
+                            <div class="trash-items-list">
+                                <div class="trash-item" draggable="true" data-type="tissue" title="Giấy ăn">🧻</div>
+                                <div class="trash-item" draggable="true" data-type="plastic_bag" title="Bọc nilon">🛍️</div>
+                                <div class="trash-item" draggable="true" data-type="plastic_cup" title="Ly nhựa">🥤</div>
+                                <div class="trash-item" draggable="true" data-type="plastic_bottle" title="Chai nhựa">🧴</div>
                             </div>
                         </div>
                         <div class="party-glow-overlay"></div>

@@ -1103,14 +1103,14 @@ const App = {
             if (span) span.innerText = cycleText;
             
             if (GameData.timeCycle === 'day') {
-                badge.style.color = 'var(--neon-yellow)';
-                badge.style.borderColor = 'rgba(202, 138, 4, 0.3)';
-                badge.style.background = 'rgba(202, 138, 4, 0.08)';
+                badge.style.color = '#ca8a04';
+                badge.style.borderColor = 'rgba(202, 138, 4, 0.35)';
+                badge.style.background = 'rgba(202, 138, 4, 0.05)';
                 badge.innerHTML = `☀️ <span class="cycle-text">${cycleText}</span>`;
             } else {
-                badge.style.color = 'var(--neon-purple)';
-                badge.style.borderColor = 'rgba(168, 85, 247, 0.3)';
-                badge.style.background = 'rgba(168, 85, 247, 0.08)';
+                badge.style.color = '#8b5cf6';
+                badge.style.borderColor = 'rgba(139, 92, 246, 0.35)';
+                badge.style.background = 'rgba(139, 92, 246, 0.05)';
                 badge.innerHTML = `🌙 <span class="cycle-text">${cycleText}</span>`;
             }
         });
@@ -1181,7 +1181,7 @@ const App = {
 
         trashItems.forEach(item => {
             item.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('text/plain', e.target.getAttribute('data-type'));
+                e.dataTransfer.setData('text/plain', item.getAttribute('data-type'));
                 e.dataTransfer.effectAllowed = 'copy';
                 SoundManager.playBeep(500, 0.05);
             });
@@ -1261,37 +1261,54 @@ const App = {
         const emoji = this.getTrashEmoji(trashItem.type);
         const name = this.getTrashName(trashItem.type);
 
+        const groupNode = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        groupNode.setAttribute('id', trashItem.id);
+        groupNode.setAttribute('class', 'trash-item-in-room');
+        groupNode.style.cssText = "cursor: pointer; user-select: none; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;";
+
+        const cardSize = 30;
+        const rectNode = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rectNode.setAttribute('x', trashItem.x - cardSize / 2);
+        rectNode.setAttribute('y', trashItem.y - cardSize / 2);
+        rectNode.setAttribute('width', cardSize);
+        rectNode.setAttribute('height', cardSize);
+        rectNode.setAttribute('rx', 6);
+        rectNode.setAttribute('ry', 6);
+        rectNode.setAttribute('fill', '#ffffff');
+        rectNode.setAttribute('stroke', '#1e293b');
+        rectNode.setAttribute('stroke-width', '2');
+
         const textNode = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        textNode.setAttribute('id', trashItem.id);
         textNode.setAttribute('x', trashItem.x);
         textNode.setAttribute('y', trashItem.y);
-        textNode.setAttribute('font-size', '26');
+        textNode.setAttribute('font-size', '16');
         textNode.setAttribute('text-anchor', 'middle');
         textNode.setAttribute('dominant-baseline', 'central');
-        textNode.setAttribute('class', 'trash-item-in-room');
-        textNode.style.cssText = "cursor: pointer; user-select: none; transition: transform 0.4s ease, opacity 0.4s ease;";
         textNode.textContent = emoji;
 
+        groupNode.appendChild(rectNode);
+        groupNode.appendChild(textNode);
+
         // Tooltip hiển thị tên rác khi hover
-        textNode.addEventListener('mouseenter', () => {
+        groupNode.addEventListener('mouseenter', () => {
             const tooltip = document.getElementById('test-device-tooltip');
             if (tooltip) {
                 tooltip.innerText = `Rác: ${name}`;
                 tooltip.classList.add('show');
                 
-                const rect = textNode.getBoundingClientRect();
+                const rect = rectNode.getBoundingClientRect();
                 const container = document.getElementById('test-room-viewport-container').getBoundingClientRect();
                 tooltip.style.top = `${rect.top - container.top - 20}px`;
                 tooltip.style.left = `${rect.left - container.left + rect.width / 2}px`;
             }
         });
 
-        textNode.addEventListener('mouseleave', () => {
+        groupNode.addEventListener('mouseleave', () => {
             const tooltip = document.getElementById('test-device-tooltip');
             if (tooltip) tooltip.classList.remove('show');
         });
 
-        trashLayer.appendChild(textNode);
+        trashLayer.appendChild(groupNode);
     },
 
     runVacuumCleaning() {
@@ -1352,6 +1369,8 @@ const App = {
                 // Chạy hiệu ứng bay vào thùng rác hoặc thu nhỏ
                 const trashEl = document.getElementById(trashObj.id);
                 if (trashEl) {
+                    trashEl.style.animation = 'none';
+                    trashEl.getBoundingClientRect(); // Force a reflow
                     trashEl.style.transform = 'scale(0)';
                     trashEl.style.opacity = '0';
                     setTimeout(() => {
