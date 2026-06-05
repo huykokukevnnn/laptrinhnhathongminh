@@ -1198,16 +1198,36 @@ const App = {
                 const type = e.dataTransfer.getData('text/plain');
                 if (!type) return;
 
-                this.dropTrashInRoom(type);
+                const svg = document.querySelector('.inner-room-svg');
+                let x = 500;
+                let y = 390;
+
+                if (svg) {
+                    const rect = svg.getBoundingClientRect();
+                    const clientX = e.clientX - rect.left;
+                    const clientY = e.clientY - rect.top;
+                    
+                    x = (clientX / rect.width) * 1000;
+                    y = (clientY / rect.height) * 450;
+                }
+
+                // Giới hạn x để tránh rác bay ra ngoài vách tường trái/phải
+                x = Math.max(50, Math.min(950, x));
+                
+                // Giới hạn y trên sàn phòng khách (y từ 360 đến 420)
+                y = Math.max(360, Math.min(420, y));
+
+                this.dropTrashInRoom(type, x, y);
             });
         }
     },
 
-    dropTrashInRoom(type) {
-        // Tọa độ ngẫu nhiên gần trung tâm của sàn (viewBox 1000 x 450)
-        // Khu vực sàn phòng khách: x từ 400 đến 700, y từ 365 đến 415
-        const x = Math.floor(Math.random() * 300) + 400;
-        const y = Math.floor(Math.random() * 50) + 365;
+    dropTrashInRoom(type, x, y) {
+        // Sử dụng tọa độ kéo thả thực tế, nếu không có sẽ ngẫu nhiên trên sàn
+        if (x === undefined || y === undefined) {
+            x = Math.floor(Math.random() * 300) + 400;
+            y = Math.floor(Math.random() * 50) + 365;
+        }
         const id = 'trash_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
 
         const trashItem = { id, type, x, y };
