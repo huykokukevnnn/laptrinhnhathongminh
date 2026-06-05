@@ -489,10 +489,10 @@ const App = {
             row.className = 'rules-editor-row';
             row.setAttribute('data-index', index);
 
-            // 1. Label Nếu
+            // 1. Label Nếu nói
             const cmdLabel = document.createElement('span');
             cmdLabel.className = 'rule-label';
-            cmdLabel.innerText = 'Nếu';
+            cmdLabel.innerText = 'Nếu nói';
 
             // 2. Select Thiết bị
             const devSelect = document.createElement('select');
@@ -598,8 +598,8 @@ const App = {
             });
 
             // Lắp ghép giao diện
-            row.appendChild(cmdLabel);
             row.appendChild(devSelect);
+            row.appendChild(cmdLabel);
             row.appendChild(cmdSelect);
             row.appendChild(actLabel);
             row.appendChild(actSelect);
