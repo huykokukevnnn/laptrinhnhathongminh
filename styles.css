@@ -847,10 +847,14 @@ main {
     transition: opacity 0.3s ease;
 }
 
-.device-ac-on .ac-wind-lines path,
-.anim-wind path {
+.device-ac-on .ac-wind-lines path {
     opacity: 0.75 !important;
     animation: windMove 1s linear infinite !important;
+}
+
+.anim-wind path {
+    opacity: 0.75 !important;
+    animation: none !important; /* Không di chuyển hơi lạnh trên ô option hành động */
 }
 
 /* Tủ lạnh mở cửa phát sáng */
