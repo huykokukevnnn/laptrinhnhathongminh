@@ -2586,5 +2586,266 @@ main {
     transition: transform 1.2s ease-in-out;
 }
 
+/* --- HỆ THỐNG LẬP TRÌNH HÌNH ẢNH TRỰC QUAN CHO HỌC SINH LỚP 2 --- */
+
+.options-selector-panel {
+    background: rgba(255, 255, 255, 0.95);
+    border: 3px dashed var(--neon-green) !important;
+    border-radius: 20px;
+    padding: 12px 16px;
+    min-height: 170px;
+    max-height: 190px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    box-shadow: 0 4px 15px rgba(22, 163, 74, 0.08);
+    transition: all 0.3s ease;
+}
+
+.options-panel-header {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--neon-green);
+    text-align: center;
+    border-bottom: 1px dashed rgba(22, 163, 74, 0.2);
+    padding-bottom: 6px;
+    letter-spacing: 0.5px;
+}
+
+.options-panel-body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.options-panel-placeholder {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.5;
+    padding: 10px;
+}
+
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    width: 100%;
+    padding: 2px;
+}
+
+.option-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    position: relative;
+    user-select: none;
+    padding: 6px;
+}
+
+.option-card:hover {
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+.option-card.selected {
+    border-color: var(--neon-green) !important;
+    background: rgba(22, 163, 74, 0.08) !important;
+    box-shadow: 0 0 10px rgba(22, 163, 74, 0.2) !important;
+}
+
+.commands-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    width: 100%;
+}
+
+.command-option-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 2px solid #e2e8f0;
+    background: #ffffff;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-main);
+    transition: all 0.2s ease;
+    text-align: left;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.command-option-btn:hover {
+    border-color: var(--neon-cyan);
+    background: rgba(6, 182, 212, 0.05);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(6, 182, 212, 0.1);
+}
+
+.command-option-btn.selected {
+    border-color: var(--neon-cyan) !important;
+    background: rgba(6, 182, 212, 0.1) !important;
+    color: var(--neon-cyan) !important;
+}
+
+/* Các trường quy tắc kiểu mới dạng nút bấm hình ảnh */
+.rule-field {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 10px;
+    border: 2.5px solid #e2e8f0;
+    background: #ffffff;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 750;
+    color: var(--text-main);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 100px;
+    height: 40px;
+    user-select: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.rule-field:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+    transform: translateY(-1px);
+}
+
+.rule-field.active-field {
+    border-color: var(--neon-green) !important;
+    box-shadow: 0 0 12px rgba(22, 163, 74, 0.35) !important;
+    background: rgba(22, 163, 74, 0.03) !important;
+}
+
+.rule-field.disabled-field {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+    background: #f1f5f9;
+}
+
+.rule-device-field {
+    min-width: 50px;
+    width: 50px;
+    font-size: 1.4rem;
+    padding: 0;
+}
+
+.rule-command-field {
+    min-width: 130px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.rule-action-field {
+    min-width: 55px;
+    width: 55px;
+    font-size: 1.4rem;
+    padding: 0;
+}
+
+/* --- HOẠT HỌA HIỆU ỨNG HÀNH ĐỘNG ĐỘNG CHO TRẺ EM --- */
+
+/* 1. Quạt xoay */
+.anim-spin {
+    animation: spinFan 1s linear infinite;
+    transform-origin: center center;
+    display: inline-block;
+}
+@keyframes spinFan {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 2. Sóng gió máy lạnh */
+.anim-wind {
+    animation: blowWind 1.2s ease-in-out infinite;
+    display: inline-block;
+}
+@keyframes blowWind {
+    0% { opacity: 0.4; transform: scale(0.9) translateY(0); }
+    50% { opacity: 1; transform: scale(1.15) translateY(3px); }
+    100% { opacity: 0.4; transform: scale(0.9) translateY(0); }
+}
+
+/* 3. Bóng đèn LED sáng */
+.anim-glow {
+    animation: bulbGlow 0.8s ease-in-out infinite alternate;
+    display: inline-block;
+}
+@keyframes bulbGlow {
+    0% { filter: drop-shadow(0 0 2px #facc15) brightness(1); }
+    100% { filter: drop-shadow(0 0 15px #facc15) brightness(1.4); }
+}
+
+/* 4. Tivi phát sáng */
+.anim-tv {
+    animation: tvScreenGlow 1.8s infinite alternate;
+    display: inline-block;
+}
+@keyframes tvScreenGlow {
+    0% { filter: drop-shadow(0 0 2px #a855f7); color: #c084fc; transform: scale(1); }
+    50% { filter: drop-shadow(0 0 8px #3b82f6); color: #60a5fa; transform: scale(1.05); }
+    100% { filter: drop-shadow(0 0 12px #ec4899); color: #f472b6; transform: scale(1); }
+}
+
+/* 5. Loa phát nhạc */
+.anim-sound {
+    animation: soundPulse 0.8s ease-in-out infinite alternate;
+    display: inline-block;
+}
+@keyframes soundPulse {
+    0% { transform: scale(0.92); }
+    100% { transform: scale(1.15); filter: drop-shadow(0 0 6px #f472b6); }
+}
+
+/* 6. Robot di chuyển rung lắc */
+.anim-vacuum {
+    animation: vacuumVibe 0.4s ease-in-out infinite alternate;
+    display: inline-block;
+}
+@keyframes vacuumVibe {
+    0% { transform: translate(-1.5px, -1.5px) rotate(-1.5deg); }
+    100% { transform: translate(1.5px, 1.5px) rotate(1.5deg); }
+}
+
+/* 7. Cửa mở hé */
+.anim-door {
+    animation: doorSwing 1.5s ease-in-out infinite alternate;
+    transform-origin: left center;
+    display: inline-block;
+}
+@keyframes doorSwing {
+    0% { transform: scaleX(1); }
+    100% { transform: scaleX(0.5) skewY(3deg); }
+}
+
+/* 8. Tủ lạnh lạnh buốt */
+.anim-fridge {
+    animation: fridgePulse 1.2s ease-in-out infinite alternate;
+    display: inline-block;
+}
+@keyframes fridgePulse {
+    0% { filter: drop-shadow(0 0 1px #38bdf8); transform: scale(0.95); }
+    100% { filter: drop-shadow(0 0 10px #06b6d4); transform: scale(1.05); }
+}
+
 
 

@@ -244,6 +244,37 @@ const GameData = {
 };
 
 // --- 3. ĐIỀU KHIỂN LOGIC CHƯƠNG TRÌNH ---
+// Cấu hình màu sắc, hình ảnh icon thiết bị và hành động trực quan cho trẻ em
+const DeviceVisuals = {
+    fan: { emoji: "🌀", color: "#e0f2fe", border: "#38bdf8" },
+    ac: { emoji: "❄️", color: "#ecfeff", border: "#22d3ee" },
+    tv: { emoji: "📺", color: "#f3e8ff", border: "#c084fc" },
+    fridge: { emoji: "🧊", color: "#f0fdf4", border: "#4ade80" },
+    speaker: { emoji: "🔊", color: "#fdf2f8", border: "#f472b6" },
+    vacuum: { emoji: "🤖", color: "#fef3c7", border: "#fbbf24" },
+    light: { emoji: "💡", color: "#fef9c3", border: "#facc15" },
+    glassdoor: { emoji: "🚪", color: "#ffedd5", border: "#fb923c" }
+};
+
+const ActionVisuals = {
+    fan_on: { emoji: "🌀", animClass: "anim-spin" },
+    fan_off: { emoji: "🌀", animClass: "" },
+    ac_on: { emoji: "❄️", animClass: "anim-wind" },
+    ac_off: { emoji: "❄️", animClass: "" },
+    tv_on: { emoji: "📺", animClass: "anim-tv" },
+    tv_off: { emoji: "📺", animClass: "" },
+    fridge_open: { emoji: "🧊", animClass: "anim-fridge" },
+    fridge_close: { emoji: "🧊", animClass: "" },
+    speaker_on: { emoji: "🔊", animClass: "anim-sound" },
+    speaker_off: { emoji: "🔊", animClass: "" },
+    vacuum_on: { emoji: "🤖", animClass: "anim-vacuum" },
+    vacuum_off: { emoji: "🤖", animClass: "" },
+    light_on: { emoji: "💡", animClass: "anim-glow" },
+    light_off: { emoji: "💡", animClass: "" },
+    glassdoor_open: { emoji: "🚪", animClass: "anim-door" },
+    glassdoor_close: { emoji: "🚪", animClass: "" }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     App.init();
 });
@@ -255,12 +286,17 @@ const App = {
     timeCycleInterval: null,
     vacuumReturnTimer: null,
     isVacuumCleaning: false,
+    
+    // Biến trạng thái lập trình hình ảnh động mới
+    activeRuleIndex: null,
+    activeFieldType: null,
 
     init() {
         this.bindGlobalEvents();
         this.setupRoomInteractions();
         this.updateDashboardUI();
         this.renderRulesEditor();
+        this.renderOptionsSelectorPanel();
     },
 
     showScreen(screenId) {
@@ -450,20 +486,33 @@ const App = {
         // Tự động tạo hàng quy tắc mới với thiết bị được chọn sẵn
         this.addNewRuleRow(devName);
 
-        // Cập nhật badge & speech của LUNA
-        document.getElementById('program-device-status-badge').innerText = `Đang chọn: ${GameData.deviceNames[devName]} ⚙️`;
+        // Cập nhật badge & speech của LUNA nếu còn tồn tại
+        const statusBadge = document.getElementById('program-device-status-badge');
+        if (statusBadge) {
+            statusBadge.innerText = `Đang chọn: ${GameData.deviceNames[devName]} ⚙️`;
+        }
         
-        const responseText = `LUNA: Tôi đã thêm một quy tắc "Nếu... Thì..." mới cho thiết bị **${GameData.deviceNames[devName]}**! Bạn hãy chọn câu lệnh và hành động của thiết bị đó ở bên phải nhé!`;
-        document.getElementById('luna-speech-text').innerText = responseText;
+        const speechEl = document.getElementById('luna-speech-text');
+        if (speechEl) {
+            const responseText = `LUNA: Tôi đã thêm một quy tắc "Nếu... Thì..." mới cho thiết bị **${GameData.deviceNames[devName]}**! Bạn hãy chọn câu lệnh và hành động của thiết bị đó ở bên phải nhé!`;
+            speechEl.innerText = responseText;
+        }
     },
 
     addNewRuleRow(devKey = '') {
+        const index = GameData.connections.length;
         GameData.connections.push({
             device: devKey,
             command: '',
             actionKey: ''
         });
+
+        // Thiết lập tiêu điểm dòng mới tạo trực quan
+        GameData.activeRuleIndex = index;
+        GameData.activeFieldType = devKey ? 'command' : 'device';
+
         this.renderRulesEditor();
+        this.renderOptionsSelectorPanel();
         SoundManager.playBeep(650, 0.08);
 
         // Tự động cuộn danh sách quy tắc xuống dưới cùng
@@ -489,124 +538,301 @@ const App = {
             row.className = 'rules-editor-row';
             row.setAttribute('data-index', index);
 
-            // 1. Label Nếu nói
+            // --- 1. FIELD CHỌN THIẾT BỊ (Hình ảnh thiết bị) ---
+            const devField = document.createElement('div');
+            devField.className = 'rule-field rule-device-field';
+            if (GameData.activeRuleIndex === index && GameData.activeFieldType === 'device') {
+                devField.classList.add('active-field');
+            }
+            
+            if (rule.device) {
+                const visual = DeviceVisuals[rule.device] || { emoji: "📁", color: "#f1f5f9" };
+                devField.innerHTML = `<span>${visual.emoji}</span>`;
+                devField.style.backgroundColor = visual.color;
+                devField.style.borderColor = visual.border || '#e2e8f0';
+                devField.title = GameData.deviceRulesConfig[rule.device].name;
+            } else {
+                devField.innerHTML = `<span style="color: #94a3b8; font-size: 1rem;">🔌 ?</span>`;
+                devField.title = "Chọn thiết bị";
+            }
+
+            devField.addEventListener('click', (e) => {
+                e.stopPropagation();
+                GameData.activeRuleIndex = index;
+                GameData.activeFieldType = 'device';
+                this.renderRulesEditor();
+                this.renderOptionsSelectorPanel();
+                SoundManager.playBeep(550, 0.05);
+            });
+
+            // --- 2. LABEL NẾU NÓI ---
             const cmdLabel = document.createElement('span');
             cmdLabel.className = 'rule-label';
-            cmdLabel.innerText = 'Nếu nói';
+            cmdLabel.innerText = 'NẾU NÓI';
 
-            // 2. Select Thiết bị
-            const devSelect = document.createElement('select');
-            devSelect.className = 'rule-select rule-device-select';
-            
-            const devPlaceholder = document.createElement('option');
-            devPlaceholder.value = '';
-            devPlaceholder.text = 'Chọn thiết bị';
-            devPlaceholder.disabled = true;
-            devPlaceholder.selected = !rule.device;
-            devSelect.appendChild(devPlaceholder);
-
-            for (let devKey in GameData.deviceRulesConfig) {
-                const opt = document.createElement('option');
-                opt.value = devKey;
-                opt.text = GameData.deviceRulesConfig[devKey].name;
-                opt.selected = rule.device === devKey;
-                devSelect.appendChild(opt);
+            // --- 3. FIELD CHỌN CÂU LỆNH (🗣️ "Câu nói") ---
+            const cmdField = document.createElement('div');
+            cmdField.className = 'rule-field rule-command-field';
+            if (!rule.device) cmdField.classList.add('disabled-field');
+            if (GameData.activeRuleIndex === index && GameData.activeFieldType === 'command') {
+                cmdField.classList.add('active-field');
             }
 
-            // 3. Select Câu lệnh (Lọc theo thiết bị)
-            const cmdSelect = document.createElement('select');
-            cmdSelect.className = 'rule-select rule-command-select';
-            cmdSelect.disabled = !rule.device;
-
-            const cmdPlaceholder = document.createElement('option');
-            cmdPlaceholder.value = '';
-            cmdPlaceholder.text = 'Chọn câu lệnh';
-            cmdPlaceholder.disabled = true;
-            cmdPlaceholder.selected = !rule.command;
-            cmdSelect.appendChild(cmdPlaceholder);
-
-            if (rule.device) {
-                const config = GameData.deviceRulesConfig[rule.device];
-                config.commands.forEach(cmd => {
-                    const opt = document.createElement('option');
-                    opt.value = cmd;
-                    opt.text = cmd;
-                    opt.selected = rule.command === cmd;
-                    cmdSelect.appendChild(opt);
-                });
+            if (rule.command) {
+                cmdField.innerHTML = `<span style="font-size: 0.78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;" title="${rule.command}">🗣️ "${rule.command}"</span>`;
+            } else {
+                cmdField.innerHTML = `<span style="color: #94a3b8; font-size: 0.78rem;">🗣️ ?</span>`;
             }
 
-            // 4. Label Thì
+            cmdField.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!rule.device) return;
+                GameData.activeRuleIndex = index;
+                GameData.activeFieldType = 'command';
+                this.renderRulesEditor();
+                this.renderOptionsSelectorPanel();
+                SoundManager.playBeep(550, 0.05);
+            });
+
+            // --- 4. LABEL THÌ ---
             const actLabel = document.createElement('span');
             actLabel.className = 'rule-label';
-            actLabel.innerText = 'Thì';
+            actLabel.innerText = 'THÌ';
 
-            // 5. Select Hành động (Lọc theo thiết bị)
-            const actSelect = document.createElement('select');
-            actSelect.className = 'rule-select rule-action-select';
-            actSelect.disabled = !rule.device;
-
-            const actPlaceholder = document.createElement('option');
-            actPlaceholder.value = '';
-            actPlaceholder.text = 'Chọn hành động';
-            actPlaceholder.disabled = true;
-            actPlaceholder.selected = !rule.actionKey;
-            actSelect.appendChild(actPlaceholder);
-
-            if (rule.device) {
-                const config = GameData.deviceRulesConfig[rule.device];
-                config.actions.forEach(act => {
-                    const opt = document.createElement('option');
-                    opt.value = act.key;
-                    opt.text = act.text;
-                    opt.selected = rule.actionKey === act.key;
-                    actSelect.appendChild(opt);
-                });
+            // --- 5. FIELD CHỌN HÀNH ĐỘNG (Hình ảnh động hành động) ---
+            const actField = document.createElement('div');
+            actField.className = 'rule-field rule-action-field';
+            if (!rule.device) actField.classList.add('disabled-field');
+            if (GameData.activeRuleIndex === index && GameData.activeFieldType === 'action') {
+                actField.classList.add('active-field');
             }
 
-            // 6. Nút xóa hàng quy tắc
+            if (rule.actionKey) {
+                const visual = ActionVisuals[rule.actionKey] || { emoji: "🎬", animClass: "" };
+                
+                const animSpan = document.createElement('span');
+                animSpan.innerText = visual.emoji;
+                animSpan.style.display = 'inline-block';
+                if (visual.animClass) {
+                    animSpan.classList.add(visual.animClass);
+                }
+                
+                actField.innerHTML = '';
+                actField.appendChild(animSpan);
+                
+                const config = GameData.deviceRulesConfig[rule.device];
+                const actText = config.actions.find(a => a.key === rule.actionKey)?.text || '';
+                actField.title = actText;
+            } else {
+                actField.innerHTML = `<span style="color: #94a3b8; font-size: 1rem;">🎬 ?</span>`;
+                actField.title = "Chọn hành động";
+            }
+
+            actField.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!rule.device) return;
+                GameData.activeRuleIndex = index;
+                GameData.activeFieldType = 'action';
+                this.renderRulesEditor();
+                this.renderOptionsSelectorPanel();
+                SoundManager.playBeep(550, 0.05);
+            });
+
+            // --- 6. NÚT XÓA HÀNG ---
             const deleteBtn = document.createElement('button');
             deleteBtn.type = 'button';
             deleteBtn.className = 'btn-delete-rule';
             deleteBtn.innerText = '❌';
             deleteBtn.title = 'Xóa quy tắc';
 
-            // Gán sự kiện thay đổi dữ liệu
-            devSelect.addEventListener('change', (e) => {
-                const newDev = e.target.value;
-                rule.device = newDev;
-                rule.command = '';
-                rule.actionKey = '';
-                this.renderRulesEditor();
-                SoundManager.playBeep(600, 0.08);
-            });
-
-            cmdSelect.addEventListener('change', (e) => {
-                rule.command = e.target.value;
-                SoundManager.playBeep(650, 0.08);
-            });
-
-            actSelect.addEventListener('change', (e) => {
-                rule.actionKey = e.target.value;
-                SoundManager.playBeep(700, 0.08);
-            });
-
-            deleteBtn.addEventListener('click', () => {
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
                 GameData.connections.splice(index, 1);
+                
+                if (GameData.activeRuleIndex === index) {
+                    GameData.activeRuleIndex = null;
+                    GameData.activeFieldType = null;
+                } else if (GameData.activeRuleIndex > index) {
+                    GameData.activeRuleIndex--;
+                }
+
                 this.renderRulesEditor();
+                this.renderOptionsSelectorPanel();
                 SoundManager.playBeep(300, 0.15, 'sawtooth');
             });
 
-            // Lắp ghép giao diện
-            row.appendChild(devSelect);
+            // Lắp ráp hàng
+            row.appendChild(devField);
             row.appendChild(cmdLabel);
-            row.appendChild(cmdSelect);
+            row.appendChild(cmdField);
             row.appendChild(actLabel);
-            row.appendChild(actSelect);
+            row.appendChild(actField);
             row.appendChild(deleteBtn);
 
             container.appendChild(row);
         });
+    },
+
+    renderOptionsSelectorPanel() {
+        const header = document.getElementById('options-panel-header');
+        const body = document.getElementById('options-panel-body');
+        if (!header || !body) return;
+
+        body.innerHTML = '';
+
+        const ruleIndex = GameData.activeRuleIndex;
+        const fieldType = GameData.activeFieldType;
+
+        // Nếu chưa chọn ô nào thì hiển thị placeholder hướng dẫn
+        if (ruleIndex === null || ruleIndex === undefined || ruleIndex < 0 || ruleIndex >= GameData.connections.length || !fieldType) {
+            header.innerText = "Bảng Lập Trình Hình Ảnh 🎨";
+            body.innerHTML = `
+                <div class="options-panel-placeholder">
+                    <p style="font-size: 1.5rem; margin-bottom: 0.5rem;">👇</p>
+                    <p>Học sinh hãy nhấn chuột vào các ô <strong>Thiết bị</strong>, <strong>Nếu nói</strong>, hoặc <strong>Hành động</strong> ở bảng dưới để chọn bằng hình ảnh nhé!</p>
+                </div>
+            `;
+            return;
+        }
+
+        const rule = GameData.connections[ruleIndex];
+
+        // 1. CHỌN THIẾT BỊ
+        if (fieldType === 'device') {
+            header.innerText = "Bước 1: Chọn thiết bị 🤖";
+            
+            const grid = document.createElement('div');
+            grid.className = 'options-grid';
+
+            for (let devKey in GameData.deviceRulesConfig) {
+                const config = GameData.deviceRulesConfig[devKey];
+                const visual = DeviceVisuals[devKey] || { emoji: "📁", color: "#f1f5f9", border: "#cbd5e1" };
+
+                const card = document.createElement('div');
+                card.className = 'option-card';
+                if (rule.device === devKey) card.classList.add('selected');
+                card.style.backgroundColor = visual.color;
+                card.style.borderColor = visual.border;
+                card.title = config.name;
+                card.innerHTML = `<span style="font-size: 2.25rem; display: inline-block;">${visual.emoji}</span>`;
+
+                card.addEventListener('click', () => {
+                    rule.device = devKey;
+                    rule.command = '';
+                    rule.actionKey = '';
+                    
+                    // Tự động nhảy sang bước chọn câu lệnh
+                    GameData.activeFieldType = 'command';
+                    
+                    this.renderRulesEditor();
+                    this.renderOptionsSelectorPanel();
+                    SoundManager.playBeep(600, 0.08);
+                });
+
+                grid.appendChild(card);
+            }
+            body.appendChild(grid);
+        }
+        
+        // 2. CHỌN CÂU LỆNH
+        else if (fieldType === 'command') {
+            header.innerText = "Bước 2: Chọn câu nói 🗣️";
+
+            if (!rule.device) {
+                body.innerHTML = `
+                    <div class="options-panel-placeholder" style="color: var(--neon-pink);">
+                        ⚠️ Học sinh cần chọn thiết bị ở ô đầu tiên trước nhé!
+                    </div>
+                `;
+                return;
+            }
+
+            const list = document.createElement('div');
+            list.className = 'commands-list';
+            
+            const config = GameData.deviceRulesConfig[rule.device];
+            config.commands.forEach(cmd => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'command-option-btn';
+                if (rule.command === cmd) btn.classList.add('selected');
+                
+                btn.innerHTML = `<span style="font-size: 1.15rem;">🗣️</span> <span style="font-weight: 700;">"${cmd}"</span>`;
+
+                btn.addEventListener('click', () => {
+                    rule.command = cmd;
+                    
+                    // Tự động nhảy sang bước chọn hành động
+                    GameData.activeFieldType = 'action';
+
+                    this.renderRulesEditor();
+                    this.renderOptionsSelectorPanel();
+                    SoundManager.playBeep(650, 0.08);
+                });
+
+                list.appendChild(btn);
+            });
+
+            body.appendChild(list);
+        }
+
+        // 3. CHỌN HÀNH ĐỘNG
+        else if (fieldType === 'action') {
+            header.innerText = "Bước 3: Chọn hành động 🎬";
+
+            if (!rule.device) {
+                body.innerHTML = `
+                    <div class="options-panel-placeholder" style="color: var(--neon-pink);">
+                        ⚠️ Học sinh cần chọn thiết bị ở ô đầu tiên trước nhé!
+                    </div>
+                `;
+                return;
+            }
+
+            const grid = document.createElement('div');
+            grid.className = 'options-grid';
+
+            const config = GameData.deviceRulesConfig[rule.device];
+            config.actions.forEach(act => {
+                const visual = ActionVisuals[act.key] || { emoji: "🎬", animClass: "" };
+
+                const card = document.createElement('div');
+                card.className = 'option-card';
+                if (rule.actionKey === act.key) card.classList.add('selected');
+                
+                const animSpan = document.createElement('span');
+                animSpan.innerText = visual.emoji;
+                animSpan.style.fontSize = '2.25rem';
+                animSpan.style.display = 'inline-block';
+                if (visual.animClass) {
+                    animSpan.classList.add(visual.animClass);
+                }
+                
+                card.appendChild(animSpan);
+
+                // Ghi chú hành động mở/tắt nhỏ bên dưới
+                const label = document.createElement('div');
+                label.style.cssText = "font-size: 0.62rem; font-weight: 800; color: var(--text-muted); margin-top: 5px; text-align: center; white-space: nowrap;";
+                label.innerText = act.text;
+                card.appendChild(label);
+
+                card.addEventListener('click', () => {
+                    rule.actionKey = act.key;
+                    
+                    // Lập trình xong dòng này, ẩn focus để học sinh hoàn thành
+                    GameData.activeFieldType = null;
+                    GameData.activeRuleIndex = null;
+
+                    this.renderRulesEditor();
+                    this.renderOptionsSelectorPanel();
+                    SoundManager.playBeep(700, 0.1);
+                });
+
+                grid.appendChild(card);
+            });
+
+            body.appendChild(grid);
+        }
     },
 
     resetSelection() {
