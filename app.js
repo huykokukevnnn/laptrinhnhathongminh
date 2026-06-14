@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const App = {
-    currentScreen: 'intro',
+    currentScreen: 'phase2',
     selectedDevice: null,
     fridgeTimer: null,
     timeCycleInterval: null,
@@ -538,7 +538,7 @@ const App = {
             row.className = 'rules-editor-row';
             row.setAttribute('data-index', index);
 
-            // --- 1. FIELD CHỌN THIẾT BỊ (Hình ảnh thiết bị) ---
+            // --- 1. FIELD CHỌN THIẾT BỊ (Hình ảnh thiết bị từ SVG thực tế) ---
             const devField = document.createElement('div');
             devField.className = 'rule-field rule-device-field';
             if (GameData.activeRuleIndex === index && GameData.activeFieldType === 'device') {
@@ -546,8 +546,8 @@ const App = {
             }
             
             if (rule.device) {
-                const visual = DeviceVisuals[rule.device] || { emoji: "📁", color: "#f1f5f9" };
-                devField.innerHTML = `<span>${visual.emoji}</span>`;
+                const visual = DeviceVisuals[rule.device] || { color: "#f1f5f9" };
+                devField.innerHTML = this.getDeviceSVGHTML(rule.device);
                 devField.style.backgroundColor = visual.color;
                 devField.style.borderColor = visual.border || '#e2e8f0';
                 devField.title = GameData.deviceRulesConfig[rule.device].name;
@@ -599,7 +599,7 @@ const App = {
             actLabel.className = 'rule-label';
             actLabel.innerText = 'THÌ';
 
-            // --- 5. FIELD CHỌN HÀNH ĐỘNG (Hình ảnh động hành động) ---
+            // --- 5. FIELD CHỌN HÀNH ĐỘNG (Hình ảnh động hành động từ SVG thực tế) ---
             const actField = document.createElement('div');
             actField.className = 'rule-field rule-action-field';
             if (!rule.device) actField.classList.add('disabled-field');
@@ -608,17 +608,7 @@ const App = {
             }
 
             if (rule.actionKey) {
-                const visual = ActionVisuals[rule.actionKey] || { emoji: "🎬", animClass: "" };
-                
-                const animSpan = document.createElement('span');
-                animSpan.innerText = visual.emoji;
-                animSpan.style.display = 'inline-block';
-                if (visual.animClass) {
-                    animSpan.classList.add(visual.animClass);
-                }
-                
-                actField.innerHTML = '';
-                actField.appendChild(animSpan);
+                actField.innerHTML = this.getDeviceSVGHTML(rule.device, rule.actionKey);
                 
                 const config = GameData.deviceRulesConfig[rule.device];
                 const actText = config.actions.find(a => a.key === rule.actionKey)?.text || '';
@@ -706,7 +696,7 @@ const App = {
 
             for (let devKey in GameData.deviceRulesConfig) {
                 const config = GameData.deviceRulesConfig[devKey];
-                const visual = DeviceVisuals[devKey] || { emoji: "📁", color: "#f1f5f9", border: "#cbd5e1" };
+                const visual = DeviceVisuals[devKey] || { color: "#f1f5f9", border: "#cbd5e1" };
 
                 const card = document.createElement('div');
                 card.className = 'option-card';
@@ -714,7 +704,7 @@ const App = {
                 card.style.backgroundColor = visual.color;
                 card.style.borderColor = visual.border;
                 card.title = config.name;
-                card.innerHTML = `<span style="font-size: 2.25rem; display: inline-block;">${visual.emoji}</span>`;
+                card.innerHTML = this.getDeviceSVGHTML(devKey);
 
                 card.addEventListener('click', () => {
                     rule.device = devKey;
@@ -794,25 +784,16 @@ const App = {
 
             const config = GameData.deviceRulesConfig[rule.device];
             config.actions.forEach(act => {
-                const visual = ActionVisuals[act.key] || { emoji: "🎬", animClass: "" };
-
                 const card = document.createElement('div');
                 card.className = 'option-card';
                 if (rule.actionKey === act.key) card.classList.add('selected');
                 
-                const animSpan = document.createElement('span');
-                animSpan.innerText = visual.emoji;
-                animSpan.style.fontSize = '2.25rem';
-                animSpan.style.display = 'inline-block';
-                if (visual.animClass) {
-                    animSpan.classList.add(visual.animClass);
-                }
-                
-                card.appendChild(animSpan);
+                // Hiển thị trực tiếp SVG của thiết bị với trạng thái bật/tắt động tương ứng
+                card.innerHTML = this.getDeviceSVGHTML(rule.device, act.key);
 
                 // Ghi chú hành động mở/tắt nhỏ bên dưới
                 const label = document.createElement('div');
-                label.style.cssText = "font-size: 0.62rem; font-weight: 800; color: var(--text-muted); margin-top: 5px; text-align: center; white-space: nowrap;";
+                label.style.cssText = "font-size: 0.62rem; font-weight: 800; color: var(--text-muted); margin-top: 5px; text-align: center; white-space: nowrap; pointer-events: none;";
                 label.innerText = act.text;
                 card.appendChild(label);
 
@@ -833,6 +814,135 @@ const App = {
 
             body.appendChild(grid);
         }
+    },
+
+    getDeviceSVGHTML(devKey, actionKey = null) {
+        const original = document.getElementById(`device-${devKey}`);
+        if (!original) return '';
+
+        // Nhân bản nhóm SVG gốc của thiết bị
+        const clone = original.cloneNode(true);
+        clone.removeAttribute('id'); // Tránh trùng lặp ID trong DOM
+
+        // Khai báo hệ tọa độ của từng thiết bị trong viewBox gốc 1000x450
+        const viewBoxes = {
+            fan: "685 135 90 220",
+            ac: "435 45 130 45", // Mặc định chỉ bắt thân máy tản nhiệt
+            tv: "385 145 230 140",
+            fridge: "15 105 130 245",
+            speaker: "300 230 40 125",
+            vacuum: "160 365 80 40",
+            light: "165 28 110 32",
+            glassdoor: "815 105 160 245"
+        };
+
+        let viewBox = viewBoxes[devKey] || "0 0 1000 450";
+
+        // Tinh chỉnh cấu trúc/animation của thiết bị nhân bản dựa trên hành động (Bật/Tắt)
+        if (devKey === 'ac') {
+            const wind = clone.querySelector('.ac-wind-lines');
+            if (wind) {
+                if (actionKey === 'ac_on') {
+                    wind.style.display = 'block';
+                    wind.style.opacity = '1';
+                    wind.classList.add('anim-wind');
+                    viewBox = "435 45 130 115"; // viewBox dài ra để chứa các tia gió rọi xuống
+                } else {
+                    wind.style.display = 'none';
+                    viewBox = "435 45 130 45"; // viewBox khít chỉ chứa máy
+                }
+            }
+        }
+        else if (devKey === 'fan') {
+            const blades = clone.querySelector('.fan-blades');
+            if (blades) {
+                if (actionKey === 'fan_on') {
+                    blades.classList.add('anim-spin');
+                } else {
+                    blades.classList.remove('anim-spin');
+                }
+            }
+        }
+        else if (devKey === 'tv') {
+            const tvScreen = clone.querySelector('.tv-screen');
+            const tvNoise = clone.querySelector('.tv-screen-noise');
+            const led = clone.querySelector('.tv-indicator-led');
+            
+            if (actionKey === 'tv_on') {
+                if (tvScreen) tvScreen.classList.add('anim-tv');
+                if (tvNoise) tvNoise.style.opacity = '0.15';
+                if (led) {
+                    led.setAttribute('fill', '#22c55e'); // Đèn LED xanh lá khi mở
+                }
+            } else {
+                if (tvScreen) tvScreen.classList.remove('anim-tv');
+                if (tvNoise) tvNoise.style.opacity = '0';
+                if (led) {
+                    led.setAttribute('fill', '#e11d48'); // Đèn LED đỏ khi tắt
+                }
+            }
+        }
+        else if (devKey === 'light') {
+            const bulb = clone.querySelector('.bulb-glow');
+            if (actionKey === 'light_on') {
+                if (bulb) bulb.classList.add('anim-glow');
+            } else {
+                if (bulb) bulb.classList.remove('anim-glow');
+            }
+            // Ẩn nón sáng rọi khổng lồ để tránh vỡ khung icon preview
+            const glows = clone.querySelectorAll('.light-glow-overlay');
+            glows.forEach(g => g.style.display = 'none');
+        }
+        else if (devKey === 'speaker') {
+            if (actionKey === 'speaker_on') {
+                clone.classList.add('anim-sound');
+            } else {
+                clone.classList.remove('anim-sound');
+            }
+        }
+        else if (devKey === 'vacuum') {
+            const body = clone.querySelector('.vacuum-body');
+            if (body) {
+                if (actionKey === 'vacuum_on') {
+                    body.classList.add('anim-vacuum');
+                } else {
+                    body.classList.remove('anim-vacuum');
+                }
+            }
+        }
+        else if (devKey === 'glassdoor') {
+            const leftDoor = clone.querySelector('.glassdoor-left');
+            const rightDoor = clone.querySelector('.glassdoor-right');
+            if (actionKey === 'glassdoor_open') {
+                if (leftDoor) leftDoor.setAttribute('transform', 'translate(-35, 0)');
+                if (rightDoor) rightDoor.setAttribute('transform', 'translate(35, 0)');
+            } else {
+                if (leftDoor) leftDoor.removeAttribute('transform');
+                if (rightDoor) rightDoor.removeAttribute('transform');
+            }
+        }
+        else if (devKey === 'fridge') {
+            const innerLight = clone.querySelector('.fridge-light');
+            const leftDoor = clone.querySelector('.fridge-door-left');
+            const rightDoor = clone.querySelector('.fridge-door-right');
+            
+            if (actionKey === 'fridge_open') {
+                if (innerLight) innerLight.style.display = 'block';
+                if (leftDoor) leftDoor.setAttribute('transform', 'translate(-30, 0)');
+                if (rightDoor) rightDoor.setAttribute('transform', 'translate(30, 0)');
+            } else {
+                if (innerLight) innerLight.style.display = 'none';
+                if (leftDoor) leftDoor.removeAttribute('transform');
+                if (rightDoor) rightDoor.removeAttribute('transform');
+            }
+        }
+
+        // Tạo thẻ SVG bao bọc nhỏ với viewBox riêng
+        return `
+            <svg class="preview-device-svg" viewBox="${viewBox}" xmlns="http://www.w3.org/2000/svg">
+                ${clone.outerHTML}
+            </svg>
+        `;
     },
 
     resetSelection() {
@@ -1705,6 +1815,6 @@ const App = {
         this.resetSelection();
         this.renderRulesEditor();
         this.migrateRoomSVG('inner-room-container-program');
-        this.showScreen('intro');
+        this.showScreen('phase2');
     }
 };

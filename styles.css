@@ -2847,5 +2847,32 @@ main {
     100% { filter: drop-shadow(0 0 10px #06b6d4); transform: scale(1.05); }
 }
 
+/* Kiểu dáng cho hình ảnh thiết bị thu nhỏ (SVG Preview) */
+.preview-device-svg {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    display: block;
+    overflow: visible;
+    margin: auto;
+}
+
+/* Điều chỉnh tỷ lệ SVG trong các ô chọn ở Panel */
+.option-card .preview-device-svg {
+    max-height: 58px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08));
+    transition: transform 0.2s ease;
+}
+.option-card:hover .preview-device-svg {
+    transform: scale(1.05);
+}
+
+/* Điều chỉnh tỷ lệ SVG trong các ô Quy tắc của bảng Lập trình */
+.rule-field .preview-device-svg {
+    max-height: 32px;
+}
+
+
 
 
