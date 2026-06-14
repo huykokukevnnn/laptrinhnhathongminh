@@ -565,10 +565,10 @@ const App = {
                 SoundManager.playBeep(550, 0.05);
             });
 
-            // --- 2. LABEL NẾU NÓI ---
+            // --- 2. LABEL NẾU ---
             const cmdLabel = document.createElement('span');
             cmdLabel.className = 'rule-label';
-            cmdLabel.innerText = 'NẾU NÓI';
+            cmdLabel.innerText = 'NẾU';
 
             // --- 3. FIELD CHỌN CÂU LỆNH (🗣️ "Câu nói") ---
             const cmdField = document.createElement('div');
@@ -614,7 +614,7 @@ const App = {
                 const actText = config.actions.find(a => a.key === rule.actionKey)?.text || '';
                 actField.title = actText;
             } else {
-                actField.innerHTML = `<span style="color: #94a3b8; font-size: 1rem;">🎬 ?</span>`;
+                actField.innerHTML = `<span style="color: #94a3b8; font-size: 1rem;">⚙️ ?</span>`;
                 actField.title = "Chọn hành động";
             }
 
@@ -679,7 +679,7 @@ const App = {
             body.innerHTML = `
                 <div class="options-panel-placeholder">
                     <p style="font-size: 1.5rem; margin-bottom: 0.5rem;">👇</p>
-                    <p>Học sinh hãy nhấn chuột vào các ô <strong>Thiết bị</strong>, <strong>Nếu nói</strong>, hoặc <strong>Hành động</strong> ở bảng dưới để chọn bằng hình ảnh nhé!</p>
+                    <p>Học sinh hãy nhấn chuột vào các ô <strong>Thiết bị</strong>, <strong>Nếu</strong>, hoặc <strong>Hành động</strong> ở bảng dưới để chọn bằng hình ảnh nhé!</p>
                 </div>
             `;
             return;
@@ -768,7 +768,7 @@ const App = {
 
         // 3. CHỌN HÀNH ĐỘNG
         else if (fieldType === 'action') {
-            header.innerText = "Bước 3: Chọn hành động 🎬";
+            header.innerText = "Bước 3: Chọn hành động ⚙️";
 
             if (!rule.device) {
                 body.innerHTML = `
@@ -895,9 +895,9 @@ const App = {
         }
         else if (devKey === 'speaker') {
             if (actionKey === 'speaker_on') {
-                clone.classList.add('anim-sound');
+                clone.classList.add('speaker-active');
             } else {
-                clone.classList.remove('anim-sound');
+                clone.classList.remove('speaker-active');
             }
         }
         else if (devKey === 'vacuum') {

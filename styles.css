@@ -847,9 +847,10 @@ main {
     transition: opacity 0.3s ease;
 }
 
-.device-ac-on .ac-wind-lines path {
-    opacity: 0.75;
-    animation: windMove 1s linear infinite;
+.device-ac-on .ac-wind-lines path,
+.anim-wind path {
+    opacity: 0.75 !important;
+    animation: windMove 1s linear infinite !important;
 }
 
 /* Tủ lạnh mở cửa phát sáng */
@@ -1833,14 +1834,16 @@ main {
     transition: opacity 0.3s ease;
 }
 
-.device-speaker-on .speaker-notes {
-    opacity: 1;
+.device-speaker-on .speaker-notes,
+.speaker-active .speaker-notes {
+    opacity: 1 !important;
 }
 
-.device-speaker-on .speaker-led {
+.device-speaker-on .speaker-led,
+.speaker-active .speaker-led {
     opacity: 1 !important;
     stroke: var(--neon-pink) !important;
-    filter: drop-shadow(0 0 5px var(--neon-pink));
+    filter: drop-shadow(0 0 5px var(--neon-pink)) !important;
 }
 
 .note-item {
@@ -1848,17 +1851,21 @@ main {
     transform-origin: bottom center;
 }
 
-.device-speaker-on .note1 {
-    animation: noteFly1 2s infinite linear;
+.device-speaker-on .note1,
+.speaker-active .note1 {
+    animation: noteFly1 2s infinite linear !important;
 }
-.device-speaker-on .note2 {
-    animation: noteFly2 2.3s infinite linear 0.5s;
+.device-speaker-on .note2,
+.speaker-active .note2 {
+    animation: noteFly2 2.3s infinite linear 0.5s !important;
 }
-.device-speaker-on .note3 {
-    animation: noteFly3 2.5s infinite linear 1s;
+.device-speaker-on .note3,
+.speaker-active .note3 {
+    animation: noteFly3 2.5s infinite linear 1s !important;
 }
-.device-speaker-on .note4 {
-    animation: noteFly4 2.2s infinite linear 1.5s;
+.device-speaker-on .note4,
+.speaker-active .note4 {
+    animation: noteFly4 2.2s infinite linear 1.5s !important;
 }
 
 @keyframes noteFly1 {
@@ -2825,15 +2832,7 @@ main {
     100% { filter: drop-shadow(0 0 12px #ec4899); color: #f472b6; transform: scale(1); }
 }
 
-/* 5. Loa phát nhạc */
-.anim-sound {
-    animation: soundPulse 0.8s ease-in-out infinite alternate;
-    display: inline-block;
-}
-@keyframes soundPulse {
-    0% { transform: scale(0.92); }
-    100% { transform: scale(1.15); filter: drop-shadow(0 0 6px #f472b6); }
-}
+/* 5. Loa phát nhạc (Thay bằng nốt nhạc bay ra, không di chuyển loa) */
 
 /* 6. Robot di chuyển rung lắc */
 .anim-vacuum {
